@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+brady_memory.json
+bradyai_v4.pt
+data/
