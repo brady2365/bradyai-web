@@ -79,9 +79,10 @@
         });
         const data = await response.json();
         addMessage('assistant', 'BradyAI', data.reply || data.error || 'Something went wrong.', data.sources || []);
-      } catch {
-        addMessage('assistant', 'BradyAI', 'Could not reach the local BradyAI server.');
-      } finally {
+        } catch (error) {
+            console.error('BradyAI error:', error);
+            addMessage('assistant', 'BradyAI', 'Error connecting to BradyAI: ' + error.message);
+        } finally {
         sendButton.disabled = false;
         sendButton.textContent = 'Send';
         input.focus();
