@@ -3,3 +3,4 @@ gunicorn>=22.0,<24.0
 requests>=2.31,<3.0
 beautifulsoup4>=4.12,<5.0
 torch>=2.0
+numpy>=1.26,<3.0
