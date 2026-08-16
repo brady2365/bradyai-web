@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BradyAI</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <script
+    defer
+    crossorigin="anonymous"
+    src="https://shining-insect-593.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"
+    type="text/javascript">
+  </script>
+
+<script
+  defer
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_c2hpbmluZy1pbnNlY3QtNTkzLmNsZXJrLmFjY291bnRzLmRldiQ"
+  src="https://shining-insect-593.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js">
+</script>
+  
 </head>
 <body>
   <main class="app-shell">
@@ -102,5 +117,40 @@
       sendMessage('clear memory');
     });
   </script>
+
+<script>
+
+async function checkAuthentication() {
+
+    try {
+
+        await Clerk.load();
+
+        if (!Clerk.user) {
+            window.location.href = "/sign-in";
+            return;
+        }
+
+        console.log(
+            "Authenticated as:",
+            Clerk.user.id
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Authentication error:",
+            error
+        );
+
+        window.location.href = "/sign-in";
+    }
+}
+
+
+checkAuthentication();
+
+</script>
+  
 </body>
 </html>
