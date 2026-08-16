@@ -361,6 +361,9 @@ def generate(user_text):
 def index():
     return render_template("index.html")
 
+@app.get("/chat")
+def chat_page():
+    return render_template("chat.html")
 
 @app.post("/api/chat")
 def chat():
