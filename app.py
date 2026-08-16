@@ -421,7 +421,7 @@ def chat_page():
     user_id = get_authenticated_user()
 
     if not user_id:
-        return redirect("/sign-in")
+        return redirect("/sign-in.html")
 
     return render_template("chat.html")
 
@@ -460,12 +460,12 @@ def chat():
     return jsonify({"reply": reply or "I do not know how to respond to that yet.", "sources": []})
 
 
-@app.route("/sign-in")
+@app.route("/sign-in.html")
 def sign_in():
     return render_template("sign-in.html")
 
 
-@app.route("/sign-up")
+@app.route("/sign-up.html")
 def sign_up():
     return render_template("sign-up.html")
 
