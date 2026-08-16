@@ -389,9 +389,6 @@ def chat():
     return jsonify({"reply": reply or "I do not know how to respond to that yet.", "sources": []})
 
 
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=False)
-
 @app.route("/sign-in")
 def sign_in():
     return render_template("sign-in.html")
@@ -400,3 +397,7 @@ def sign_in():
 @app.route("/sign-up")
 def sign_up():
     return render_template("sign-up.html")
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=False)
