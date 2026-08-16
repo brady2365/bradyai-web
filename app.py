@@ -396,12 +396,33 @@ def get_authenticated_user():
 
 
 
+@app.get("/api/auth")
+def auth_status():
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "authenticated": False
+        }), 401
+
+    return jsonify({
+        "authenticated": True,
+        "user_id": user_id
+    })
+
 @app.get("/")
 def index():
     return render_template("index.html")
 
 @app.get("/chat")
 def chat_page():
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return redirect("/templates/sign-in")
+
     return render_template("chat.html")
 
 @app.post("/api/chat")
