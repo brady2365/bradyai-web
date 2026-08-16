@@ -421,7 +421,7 @@ def chat_page():
     user_id = get_authenticated_user()
 
     if not user_id:
-        return redirect("/templates/sign-in")
+        return redirect("/sign-in")
 
     return render_template("chat.html")
 
