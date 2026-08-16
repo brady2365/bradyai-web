@@ -5,7 +5,8 @@ from pathlib import Path
 
 import torch
 import torch.nn.functional as F
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, redirect
+from clerk_backend_api import Clerk
 
 from model import BradyAI
 from research import research
@@ -22,6 +23,9 @@ PUBLIC_MODE = os.environ.get("PUBLIC_MODE", "false").lower() == "true"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 app = Flask(__name__)
 
+clerk = Clerk(
+    bearer_auth=os.environ.get("CLERK_SECRET_KEY")
+)
 
 def load_memory():
     if not MEMORY_FILE.exists():
