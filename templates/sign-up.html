@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Account — BradyAI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='auth.css') }}"
+    >
+
+    <!-- Clerk -->
+    <script
+        async
+        crossorigin="anonymous"
+        data-clerk-publishable-key="YOUR_CLERK_PUBLISHABLE_KEY"
+        src="https://YOUR_CLERK_FRONTEND_API/__clerk.js">
+    </script>
+
+</head>
+
+<body>
+
+<div class="background-glow glow-one"></div>
+<div class="background-glow glow-two"></div>
+
+
+<main class="auth-page">
+
+    <section class="auth-card signup-card">
+
+
+        <!-- Logo -->
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                B
+            </div>
+
+            <span>
+                BradyAI
+            </span>
+
+        </div>
+
+
+        <!-- Heading -->
+
+        <div class="auth-header">
+
+            <h1>
+                Create your account
+            </h1>
+
+            <p>
+                Join BradyAI and start chatting with your AI
+            </p>
+
+        </div>
+
+
+        <!-- Google -->
+
+        <button
+            type="button"
+            class="google-button"
+            id="google-button"
+        >
+
+            <span class="google-icon">
+                G
+            </span>
+
+            <span>
+                Continue with Google
+            </span>
+
+        </button>
+
+
+        <!-- Divider -->
+
+        <div class="divider">
+
+            <span></span>
+
+            <p>or</p>
+
+            <span></span>
+
+        </div>
+
+
+        <!-- Form -->
+
+        <form id="sign-up-form">
+
+
+            <!-- Name -->
+
+            <div class="input-group">
+
+                <label for="name">
+                    Name
+                </label>
+
+                <input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your name"
+                    autocomplete="name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="input-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Password -->
+
+            <div class="input-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        id="toggle-password"
+                        class="password-toggle"
+                    >
+                        <span id="eye-icon">
+                            Show
+                        </span>
+                    </button>
+
+                </div>
+
+                <div class="password-hint">
+
+                    Use at least 8 characters.
+
+                </div>
+
+            </div>
+
+
+            <!-- Error -->
+
+            <div
+                id="auth-error"
+                class="auth-error"
+            ></div>
+
+
+            <!-- Submit -->
+
+            <button
+                type="submit"
+                class="primary-button"
+                id="sign-up-button"
+            >
+
+                <span id="button-text">
+                    Create Account
+                </span>
+
+                <span
+                    id="button-spinner"
+                    class="spinner"
+                ></span>
+
+            </button>
+
+        </form>
+
+
+        <!-- Login -->
+
+        <div class="switch-auth">
+
+            <span>
+                Already have an account?
+            </span>
+
+            <a href="/sign-in">
+                Sign in
+            </a>
+
+        </div>
+
+
+        <!-- Footer -->
+
+        <div class="auth-footer">
+
+            By creating an account, you agree to BradyAI's
+            <a href="#">
+                Terms
+            </a>
+            and
+            <a href="#">
+                Privacy Policy
+            </a>.
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+<script>
+
+const form =
+    document.getElementById("sign-up-form");
+
+const nameInput =
+    document.getElementById("name");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const errorBox =
+    document.getElementById("auth-error");
+
+const submitButton =
+    document.getElementById("sign-up-button");
+
+const buttonText =
+    document.getElementById("button-text");
+
+const spinner =
+    document.getElementById("button-spinner");
+
+const togglePassword =
+    document.getElementById("toggle-password");
+
+const googleButton =
+    document.getElementById("google-button");
+
+
+// ==========================================
+// ERROR
+// ==========================================
+
+function showError(message) {
+
+    errorBox.textContent = message;
+
+    errorBox.classList.add("show");
+
+}
+
+
+// ==========================================
+// CLEAR ERROR
+// ==========================================
+
+function clearError() {
+
+    errorBox.textContent = "";
+
+    errorBox.classList.remove("show");
+
+}
+
+
+// ==========================================
+// LOADING
+// ==========================================
+
+function setLoading(loading) {
+
+    submitButton.disabled = loading;
+
+    if (loading) {
+
+        buttonText.style.display = "none";
+
+        spinner.style.display = "block";
+
+    } else {
+
+        buttonText.style.display = "inline";
+
+        spinner.style.display = "none";
+
+    }
+
+}
+
+
+// ==========================================
+// PASSWORD
+// ==========================================
+
+togglePassword.addEventListener(
+    "click",
+    () => {
+
+        if (
+            passwordInput.type === "password"
+        ) {
+
+            passwordInput.type = "text";
+
+            document.getElementById(
+                "eye-icon"
+            ).textContent = "Hide";
+
+        } else {
+
+            passwordInput.type = "password";
+
+            document.getElementById(
+                "eye-icon"
+            ).textContent = "Show";
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// SIGN UP
+// ==========================================
+
+form.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        clearError();
+
+        const name =
+            nameInput.value.trim();
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+
+        if (
+            !name ||
+            !email ||
+            !password
+        ) {
+
+            showError(
+                "Please complete all fields."
+            );
+
+            return;
+
+        }
+
+
+        if (password.length < 8) {
+
+            showError(
+                "Your password must be at least 8 characters."
+            );
+
+            return;
+
+        }
+
+
+        setLoading(true);
+
+
+        try {
+
+            const result =
+                await window.Clerk.client.signUp.create({
+                    emailAddress: email,
+                    password: password,
+                    firstName: name
+                });
+
+
+            if (
+                result.status === "complete"
+            ) {
+
+                window.location.href = "/";
+
+                return;
+
+            }
+
+
+            if (
+                result.status === "missing_requirements"
+            ) {
+
+                showError(
+                    "Please complete the additional verification steps."
+                );
+
+            } else {
+
+                showError(
+                    "Please check your email to continue."
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            let message =
+                "Unable to create your account.";
+
+            if (
+                error?.errors?.[0]?.longMessage
+            ) {
+
+                message =
+                    error.errors[0].longMessage;
+
+            }
+
+            showError(message);
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// GOOGLE
+// ==========================================
+
+googleButton.addEventListener(
+    "click",
+    async () => {
+
+        clearError();
+
+        try {
+
+            await window.Clerk.client.signUp.authenticateWithRedirect({
+                strategy: "oauth_google",
+                redirectUrl: "/sign-up",
+                redirectUrlComplete: "/"
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                "Google sign-up failed. Please try again."
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
