@@ -1,516 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Create Account — BradyAI</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='auth.css') }}"
-    >
-
     <!-- Clerk -->
     <script
-        async
-        crossorigin="anonymous"
-        data-clerk-publishable-key="YOUR_CLERK_PUBLISHABLE_KEY"
-        src="https://YOUR_CLERK_FRONTEND_API/__clerk.js">
+      defer
+      crossorigin="anonymous"
+      src="https://shining-insect-593.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"
+      type="text/javascript">
     </script>
+
+    <script
+      defer
+      crossorigin="anonymous"
+      data-clerk-publishable-key="pk_test_c2hpbmluZy1pbnNlY3QtNTkzLmNsZXJrLmFjY291bnRzLmRldiQ"
+      src="https://shining-insect-593.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"
+      type="text/javascript">
+    </script>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #050505;
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+
+        /* ================================
+           BACKGROUND
+        ================================= */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+
+        .glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.18;
+        }
+
+
+        .glow.one {
+            background: #5865f2;
+            top: -250px;
+            left: -150px;
+        }
+
+
+        .glow.two {
+            background: #7c3aed;
+            bottom: -300px;
+            right: -150px;
+        }
+
+
+        /* ================================
+           PAGE
+        ================================= */
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+
+        /* ================================
+           CARD
+        ================================= */
+
+        .card {
+            width: 100%;
+            max-width: 430px;
+
+            background: rgba(15, 15, 18, 0.92);
+
+            border: 1px solid rgba(
+                255,
+                255,
+                255,
+                0.09
+            );
+
+            border-radius: 22px;
+
+            padding: 38px 34px;
+
+            box-shadow:
+                0 25px 80px rgba(0, 0, 0, 0.55),
+                0 0 80px rgba(88, 101, 242, 0.06);
+
+            backdrop-filter: blur(20px);
+        }
+
+
+        /* ================================
+           BRAND
+        ================================= */
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 11px;
+            margin-bottom: 30px;
+        }
+
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+                135deg,
+                #5865f2,
+                #7c3aed
+            );
+
+            font-size: 22px;
+            font-weight: 800;
+
+            box-shadow:
+                0 8px 25px rgba(
+                    88,
+                    101,
+                    242,
+                    0.3
+                );
+        }
+
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+
+        /* ================================
+           HEADER
+        ================================= */
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+
+        .header h1 {
+            font-size: 30px;
+            line-height: 1.2;
+            letter-spacing: -1px;
+            margin-bottom: 9px;
+        }
+
+
+        .header p {
+            color: #8e8e98;
+            font-size: 14px;
+        }
+
+
+        /* ================================
+           CLERK
+        ================================= */
+
+        #clerk-sign-up {
+            width: 100%;
+        }
+
+
+        /* ================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 500px) {
+
+            .page {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 30px 22px;
+                border-radius: 18px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<div class="background-glow glow-one"></div>
-<div class="background-glow glow-two"></div>
+    <div class="background">
+
+        <div class="glow one"></div>
+
+        <div class="glow two"></div>
+
+    </div>
 
 
-<main class="auth-page">
+    <main class="page">
 
-    <section class="auth-card signup-card">
+        <section class="card">
 
+            <div class="brand">
 
-        <!-- Logo -->
-
-        <div class="brand">
-
-            <div class="brand-icon">
-                B
-            </div>
-
-            <span>
-                BradyAI
-            </span>
-
-        </div>
-
-
-        <!-- Heading -->
-
-        <div class="auth-header">
-
-            <h1>
-                Create your account
-            </h1>
-
-            <p>
-                Join BradyAI and start chatting with your AI
-            </p>
-
-        </div>
-
-
-        <!-- Google -->
-
-        <button
-            type="button"
-            class="google-button"
-            id="google-button"
-        >
-
-            <span class="google-icon">
-                G
-            </span>
-
-            <span>
-                Continue with Google
-            </span>
-
-        </button>
-
-
-        <!-- Divider -->
-
-        <div class="divider">
-
-            <span></span>
-
-            <p>or</p>
-
-            <span></span>
-
-        </div>
-
-
-        <!-- Form -->
-
-        <form id="sign-up-form">
-
-
-            <!-- Name -->
-
-            <div class="input-group">
-
-                <label for="name">
-                    Name
-                </label>
-
-                <input
-                    id="name"
-                    type="text"
-                    placeholder="Enter your name"
-                    autocomplete="name"
-                    required
-                >
-
-            </div>
-
-
-            <!-- Email -->
-
-            <div class="input-group">
-
-                <label for="email">
-                    Email
-                </label>
-
-                <input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    autocomplete="email"
-                    required
-                >
-
-            </div>
-
-
-            <!-- Password -->
-
-            <div class="input-group">
-
-                <label for="password">
-                    Password
-                </label>
-
-                <div class="password-wrapper">
-
-                    <input
-                        id="password"
-                        type="password"
-                        placeholder="Create a password"
-                        autocomplete="new-password"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        id="toggle-password"
-                        class="password-toggle"
-                    >
-                        <span id="eye-icon">
-                            Show
-                        </span>
-                    </button>
-
+                <div class="brand-logo">
+                    B
                 </div>
 
-                <div class="password-hint">
-
-                    Use at least 8 characters.
-
+                <div class="brand-name">
+                    BradyAI
                 </div>
 
             </div>
 
 
-            <!-- Error -->
+            <div class="header">
 
-            <div
-                id="auth-error"
-                class="auth-error"
-            ></div>
+                <h1>
+                    Create your account
+                </h1>
 
+                <p>
+                    Join BradyAI and start chatting
+                </p>
 
-            <!-- Submit -->
+            </div>
 
-            <button
-                type="submit"
-                class="primary-button"
-                id="sign-up-button"
-            >
 
-                <span id="button-text">
-                    Create Account
-                </span>
+            <div id="clerk-sign-up"></div>
 
-                <span
-                    id="button-spinner"
-                    class="spinner"
-                ></span>
+        </section>
 
-            </button>
+    </main>
 
-        </form>
 
+    <script>
 
-        <!-- Login -->
+        window.addEventListener("load", async () => {
 
-        <div class="switch-auth">
+            try {
 
-            <span>
-                Already have an account?
-            </span>
+                await Clerk.load();
 
-            <a href="/sign-in">
-                Sign in
-            </a>
-
-        </div>
-
-
-        <!-- Footer -->
-
-        <div class="auth-footer">
-
-            By creating an account, you agree to BradyAI's
-            <a href="#">
-                Terms
-            </a>
-            and
-            <a href="#">
-                Privacy Policy
-            </a>.
-
-        </div>
-
-
-    </section>
-
-</main>
-
-
-<script>
-
-const form =
-    document.getElementById("sign-up-form");
-
-const nameInput =
-    document.getElementById("name");
-
-const emailInput =
-    document.getElementById("email");
-
-const passwordInput =
-    document.getElementById("password");
-
-const errorBox =
-    document.getElementById("auth-error");
-
-const submitButton =
-    document.getElementById("sign-up-button");
-
-const buttonText =
-    document.getElementById("button-text");
-
-const spinner =
-    document.getElementById("button-spinner");
-
-const togglePassword =
-    document.getElementById("toggle-password");
-
-const googleButton =
-    document.getElementById("google-button");
-
-
-// ==========================================
-// ERROR
-// ==========================================
-
-function showError(message) {
-
-    errorBox.textContent = message;
-
-    errorBox.classList.add("show");
-
-}
-
-
-// ==========================================
-// CLEAR ERROR
-// ==========================================
-
-function clearError() {
-
-    errorBox.textContent = "";
-
-    errorBox.classList.remove("show");
-
-}
-
-
-// ==========================================
-// LOADING
-// ==========================================
-
-function setLoading(loading) {
-
-    submitButton.disabled = loading;
-
-    if (loading) {
-
-        buttonText.style.display = "none";
-
-        spinner.style.display = "block";
-
-    } else {
-
-        buttonText.style.display = "inline";
-
-        spinner.style.display = "none";
-
-    }
-
-}
-
-
-// ==========================================
-// PASSWORD
-// ==========================================
-
-togglePassword.addEventListener(
-    "click",
-    () => {
-
-        if (
-            passwordInput.type === "password"
-        ) {
-
-            passwordInput.type = "text";
-
-            document.getElementById(
-                "eye-icon"
-            ).textContent = "Hide";
-
-        } else {
-
-            passwordInput.type = "password";
-
-            document.getElementById(
-                "eye-icon"
-            ).textContent = "Show";
-
-        }
-
-    }
-);
-
-
-// ==========================================
-// SIGN UP
-// ==========================================
-
-form.addEventListener(
-    "submit",
-    async (event) => {
-
-        event.preventDefault();
-
-        clearError();
-
-        const name =
-            nameInput.value.trim();
-
-        const email =
-            emailInput.value.trim();
-
-        const password =
-            passwordInput.value;
-
-
-        if (
-            !name ||
-            !email ||
-            !password
-        ) {
-
-            showError(
-                "Please complete all fields."
-            );
-
-            return;
-
-        }
-
-
-        if (password.length < 8) {
-
-            showError(
-                "Your password must be at least 8 characters."
-            );
-
-            return;
-
-        }
-
-
-        setLoading(true);
-
-
-        try {
-
-            const result =
-                await window.Clerk.client.signUp.create({
-                    emailAddress: email,
-                    password: password,
-                    firstName: name
-                });
-
-
-            if (
-                result.status === "complete"
-            ) {
-
-                window.location.href = "/";
-
-                return;
-
-            }
-
-
-            if (
-                result.status === "missing_requirements"
-            ) {
-
-                showError(
-                    "Please complete the additional verification steps."
+                console.log(
+                    "Clerk loaded successfully."
                 );
 
-            } else {
 
-                showError(
-                    "Please check your email to continue."
+                Clerk.mountSignUp(
+                    document.getElementById(
+                        "clerk-sign-up"
+                    ),
+                    {
+                        routing: "hash",
+                        signInUrl: "/sign-in"
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Clerk failed to load:",
+                    error
                 );
 
             }
 
-        } catch (error) {
+        });
 
-            console.error(error);
-
-            let message =
-                "Unable to create your account.";
-
-            if (
-                error?.errors?.[0]?.longMessage
-            ) {
-
-                message =
-                    error.errors[0].longMessage;
-
-            }
-
-            showError(message);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    }
-);
-
-
-// ==========================================
-// GOOGLE
-// ==========================================
-
-googleButton.addEventListener(
-    "click",
-    async () => {
-
-        clearError();
-
-        try {
-
-            await window.Clerk.client.signUp.authenticateWithRedirect({
-                strategy: "oauth_google",
-                redirectUrl: "/sign-up",
-                redirectUrlComplete: "/"
-            });
-
-        } catch (error) {
-
-            console.error(error);
-
-            showError(
-                "Google sign-up failed. Please try again."
-            );
-
-        }
-
-    }
-);
-
-</script>
+    </script>
 
 </body>
+
 </html>
