@@ -1,0 +1,897 @@
+/* ==========================================
+   RESET
+========================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    min-height: 100%;
+}
+
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(49, 95, 190, 0.18),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(92, 143, 255, 0.12),
+            transparent 35%
+        ),
+        #080d1b;
+
+    color: #ffffff;
+
+    min-height: 100vh;
+
+    overflow-x: hidden;
+}
+
+
+/* ==========================================
+   BACKGROUND
+========================================== */
+
+.auth-page {
+
+    position: relative;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 40px 20px;
+
+    z-index: 2;
+}
+
+
+.background-glow {
+
+    position: fixed;
+
+    width: 450px;
+
+    height: 450px;
+
+    border-radius: 50%;
+
+    filter: blur(120px);
+
+    pointer-events: none;
+
+    opacity: 0.22;
+
+}
+
+
+.glow-one {
+
+    top: -200px;
+
+    left: -150px;
+
+    background: #315fbe;
+
+}
+
+
+.glow-two {
+
+    right: -200px;
+
+    bottom: -200px;
+
+    background: #5c8fff;
+
+}
+
+
+/* ==========================================
+   AUTH CARD
+========================================== */
+
+.auth-card {
+
+    width: 100%;
+
+    max-width: 440px;
+
+    padding: 42px;
+
+    background:
+        rgba(15, 22, 43, 0.82);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.09);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+
+    animation:
+        cardEnter 0.5s ease forwards;
+}
+
+
+.signup-card {
+
+    max-width: 460px;
+
+}
+
+
+/* ==========================================
+   CARD ANIMATION
+========================================== */
+
+@keyframes cardEnter {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(18px)
+            scale(0.98);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* ==========================================
+   BRAND
+========================================== */
+
+.brand {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-bottom: 32px;
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.4px;
+}
+
+
+.brand-icon {
+
+    width: 34px;
+
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315fbe,
+            #5c8fff
+        );
+
+    box-shadow:
+        0 8px 24px rgba(49, 95, 190, 0.35);
+
+    font-size: 17px;
+
+    font-weight: 800;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.auth-header {
+
+    text-align: center;
+
+    margin-bottom: 28px;
+}
+
+
+.auth-header h1 {
+
+    margin: 0 0 9px;
+
+    font-size: 30px;
+
+    line-height: 1.2;
+
+    letter-spacing: -0.8px;
+
+    font-weight: 700;
+}
+
+
+.auth-header p {
+
+    margin: 0;
+
+    color: #8f9bb7;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* ==========================================
+   GOOGLE BUTTON
+========================================== */
+
+.google-button {
+
+    width: 100%;
+
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    border: 1px solid #303a56;
+
+    border-radius: 12px;
+
+    background: #111a31;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.google-button:hover {
+
+    background: #17213c;
+
+    border-color: #46557b;
+
+    transform: translateY(-1px);
+
+}
+
+
+.google-icon {
+
+    width: 21px;
+
+    height: 21px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: white;
+
+    color: #4285f4;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+/* ==========================================
+   DIVIDER
+========================================== */
+
+.divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin: 24px 0;
+}
+
+
+.divider span {
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #29334d;
+}
+
+
+.divider p {
+
+    margin: 0;
+
+    color: #6f7b98;
+
+    font-size: 12px;
+}
+
+
+/* ==========================================
+   INPUT GROUP
+========================================== */
+
+.input-group {
+
+    margin-bottom: 19px;
+}
+
+
+.input-group label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #dce3f5;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.input-group input {
+
+    width: 100%;
+
+    height: 50px;
+
+    padding: 0 15px;
+
+    border: 1px solid #2b3652;
+
+    border-radius: 11px;
+
+    outline: none;
+
+    background: #0d1529;
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.input-group input::placeholder {
+
+    color: #596681;
+
+}
+
+
+.input-group input:hover {
+
+    border-color: #3a4869;
+
+}
+
+
+.input-group input:focus {
+
+    background: #101a31;
+
+    border-color: #4d7fe4;
+
+    box-shadow:
+        0 0 0 3px rgba(77, 127, 228, 0.12);
+}
+
+
+/* ==========================================
+   PASSWORD
+========================================== */
+
+.password-label {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+}
+
+
+.password-label label {
+
+    margin: 0;
+}
+
+
+.password-wrapper {
+
+    position: relative;
+}
+
+
+.password-wrapper input {
+
+    padding-right: 65px;
+}
+
+
+.password-toggle {
+
+    position: absolute;
+
+    right: 10px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border: none;
+
+    background: transparent;
+
+    color: #7180a0;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    padding: 7px;
+
+}
+
+
+.password-toggle:hover {
+
+    color: #aab7d4;
+
+}
+
+
+.forgot-link {
+
+    border: none;
+
+    background: none;
+
+    padding: 0;
+
+    color: #719af1;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+
+.forgot-link:hover {
+
+    color: #91b3ff;
+
+    text-decoration: underline;
+}
+
+
+.password-hint {
+
+    margin-top: 7px;
+
+    color: #687692;
+
+    font-size: 11px;
+}
+
+
+/* ==========================================
+   REMEMBER ME
+========================================== */
+
+.remember {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin: 3px 0 20px;
+
+    color: #8996b1;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+
+.remember input {
+
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.custom-checkbox {
+
+    width: 16px;
+
+    height: 16px;
+
+    border: 1px solid #3b4763;
+
+    border-radius: 4px;
+
+    background: #0d1529;
+
+    transition: 0.2s ease;
+}
+
+
+.remember input:checked + .custom-checkbox {
+
+    background: #315fbe;
+
+    border-color: #315fbe;
+
+    box-shadow:
+        0 0 10px rgba(49, 95, 190, 0.3);
+}
+
+
+/* ==========================================
+   ERROR
+========================================== */
+
+.auth-error {
+
+    display: none;
+
+    margin-bottom: 16px;
+
+    padding: 11px 13px;
+
+    border: 1px solid rgba(255, 90, 90, 0.25);
+
+    border-radius: 9px;
+
+    background: rgba(255, 70, 70, 0.08);
+
+    color: #ff8e8e;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.auth-error.show {
+
+    display: block;
+
+}
+
+
+/* ==========================================
+   PRIMARY BUTTON
+========================================== */
+
+.primary-button {
+
+    width: 100%;
+
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315fbe,
+            #4c7ee2
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 25px rgba(49, 95, 190, 0.22);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+
+.primary-button:hover {
+
+    transform: translateY(-1px);
+
+    filter: brightness(1.08);
+
+    box-shadow:
+        0 14px 30px rgba(49, 95, 190, 0.32);
+
+}
+
+
+.primary-button:active {
+
+    transform: translateY(0);
+
+}
+
+
+.primary-button:disabled {
+
+    opacity: 0.7;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* ==========================================
+   SPINNER
+========================================== */
+
+.spinner {
+
+    display: none;
+
+    width: 18px;
+
+    height: 18px;
+
+    border:
+        2px solid rgba(255, 255, 255, 0.3);
+
+    border-top-color: white;
+
+    border-radius: 50%;
+
+    animation:
+        spin 0.7s linear infinite;
+}
+
+
+@keyframes spin {
+
+    to {
+
+        transform: rotate(360deg);
+
+    }
+
+}
+
+
+/* ==========================================
+   SWITCH AUTH
+========================================== */
+
+.switch-auth {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 25px;
+
+    color: #76839e;
+
+    font-size: 13px;
+}
+
+
+.switch-auth a {
+
+    color: #719af1;
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.switch-auth a:hover {
+
+    color: #91b3ff;
+
+}
+
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.auth-footer {
+
+    margin-top: 25px;
+
+    color: #596681;
+
+    text-align: center;
+
+    font-size: 10px;
+
+    line-height: 1.6;
+}
+
+
+.auth-footer a {
+
+    color: #7180a0;
+
+    text-decoration: none;
+}
+
+
+.auth-footer a:hover {
+
+    color: #91a2c7;
+
+    text-decoration: underline;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 520px) {
+
+    .auth-page {
+
+        padding: 20px 14px;
+
+    }
+
+
+    .auth-card {
+
+        padding: 30px 22px;
+
+        border-radius: 20px;
+
+    }
+
+
+    .auth-header h1 {
+
+        font-size: 26px;
+
+    }
+
+
+    .brand {
+
+        margin-bottom: 26px;
+
+    }
+
+}
+
+
+/* ==========================================
+   VERY SMALL SCREENS
+========================================== */
+
+@media (max-width: 360px) {
+
+    .auth-card {
+
+        padding: 25px 17px;
+
+    }
+
+
+    .auth-header h1 {
+
+        font-size: 24px;
+
+    }
+
+}
