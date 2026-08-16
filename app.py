@@ -360,6 +360,41 @@ def generate(user_text):
 
     return response
 
+def get_authenticated_user():
+    """
+    Verify the Clerk session token sent by the browser.
+
+    Returns:
+        user_id if authenticated
+        None if not authenticated
+    """
+
+    authorization = request.headers.get("Authorization", "")
+
+    if not authorization.startswith("Bearer "):
+        return None
+
+    token = authorization[7:].strip()
+
+    if not token:
+        return None
+
+    try:
+        result = clerk.authenticate_request(
+            request,
+            accepts_token=["session_token"],
+        )
+
+        if not result.is_signed_in:
+            return None
+
+        return result.payload.get("sub")
+
+    except Exception as error:
+        print("Clerk authentication error:", error, flush=True)
+        return None
+
+
 
 @app.get("/")
 def index():
@@ -371,6 +406,14 @@ def chat_page():
 
 @app.post("/api/chat")
 def chat():
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in to use BradyAI."
+        }), 401    
+    
     data = request.get_json(silent=True) or {}
     message = str(data.get("message", "")).strip()
 
