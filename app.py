@@ -14,9 +14,9 @@ from tokenizer import BPETokenizer
 
 MODEL_FILE = "bradyai_v3.pt"
 MEMORY_FILE = Path("brady_memory.json")
-MAX_NEW_TOKENS = 30
+MAX_NEW_TOKENS = 12
 TEMPERATURE = 0.25
-TOP_K = 10
+TOP_K = 5
 PUBLIC_MODE = os.environ.get("PUBLIC_MODE", "false").lower() == "true"
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
