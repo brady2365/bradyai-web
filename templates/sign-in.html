@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sign In — BradyAI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+
+    <!-- Clerk -->
+    <script
+        async
+        crossorigin="anonymous"
+        data-clerk-publishable-key="YOUR_CLERK_PUBLISHABLE_KEY"
+        src="https://YOUR_CLERK_FRONTEND_API/__clerk.js">
+    </script>
+</head>
+
+<body>
+
+<div class="background-glow glow-one"></div>
+<div class="background-glow glow-two"></div>
+
+<main class="auth-page">
+
+    <section class="auth-card">
+
+        <!-- Logo -->
+        <div class="brand">
+            <div class="brand-icon">B</div>
+
+            <span>BradyAI</span>
+        </div>
+
+
+        <!-- Heading -->
+        <div class="auth-header">
+
+            <h1>Welcome back</h1>
+
+            <p>
+                Sign in to continue to BradyAI
+            </p>
+
+        </div>
+
+
+        <!-- Google -->
+        <button
+            type="button"
+            class="google-button"
+            id="google-button"
+        >
+
+            <span class="google-icon">G</span>
+
+            <span>
+                Continue with Google
+            </span>
+
+        </button>
+
+
+        <!-- Divider -->
+        <div class="divider">
+
+            <span></span>
+
+            <p>or</p>
+
+            <span></span>
+
+        </div>
+
+
+        <!-- Form -->
+        <form id="sign-in-form">
+
+            <!-- Email -->
+            <div class="input-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Password -->
+            <div class="input-group">
+
+                <div class="password-label">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <button
+                        type="button"
+                        id="forgot-password"
+                        class="forgot-link"
+                    >
+                        Forgot password?
+                    </button>
+
+                </div>
+
+                <div class="password-wrapper">
+
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        id="toggle-password"
+                        class="password-toggle"
+                        aria-label="Show password"
+                    >
+                        <span id="eye-icon">Show</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Remember -->
+            <label class="remember">
+
+                <input
+                    type="checkbox"
+                    id="remember"
+                >
+
+                <span class="custom-checkbox"></span>
+
+                <span>
+                    Remember me
+                </span>
+
+            </label>
+
+
+            <!-- Error -->
+            <div
+                id="auth-error"
+                class="auth-error"
+            ></div>
+
+
+            <!-- Submit -->
+            <button
+                type="submit"
+                class="primary-button"
+                id="sign-in-button"
+            >
+
+                <span id="button-text">
+                    Sign In
+                </span>
+
+                <span
+                    id="button-spinner"
+                    class="spinner"
+                ></span>
+
+            </button>
+
+        </form>
+
+
+        <!-- Sign up -->
+        <div class="switch-auth">
+
+            <span>
+                Don't have an account?
+            </span>
+
+            <a href="/sign-up">
+                Sign up
+            </a>
+
+        </div>
+
+
+        <!-- Footer -->
+        <div class="auth-footer">
+
+            By continuing, you agree to BradyAI's
+            <a href="#">Terms</a>
+            and
+            <a href="#">Privacy Policy</a>.
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+const form = document.getElementById("sign-in-form");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const errorBox =
+    document.getElementById("auth-error");
+
+const submitButton =
+    document.getElementById("sign-in-button");
+
+const buttonText =
+    document.getElementById("button-text");
+
+const spinner =
+    document.getElementById("button-spinner");
+
+const togglePassword =
+    document.getElementById("toggle-password");
+
+const forgotPassword =
+    document.getElementById("forgot-password");
+
+const googleButton =
+    document.getElementById("google-button");
+
+
+// ==========================================
+// ERROR
+// ==========================================
+
+function showError(message) {
+
+    errorBox.textContent = message;
+
+    errorBox.classList.add("show");
+
+}
+
+
+// ==========================================
+// CLEAR ERROR
+// ==========================================
+
+function clearError() {
+
+    errorBox.textContent = "";
+
+    errorBox.classList.remove("show");
+
+}
+
+
+// ==========================================
+// LOADING
+// ==========================================
+
+function setLoading(loading) {
+
+    submitButton.disabled = loading;
+
+    if (loading) {
+
+        buttonText.style.display = "none";
+
+        spinner.style.display = "block";
+
+    } else {
+
+        buttonText.style.display = "inline";
+
+        spinner.style.display = "none";
+
+    }
+
+}
+
+
+// ==========================================
+// PASSWORD VISIBILITY
+// ==========================================
+
+togglePassword.addEventListener(
+    "click",
+    () => {
+
+        if (
+            passwordInput.type === "password"
+        ) {
+
+            passwordInput.type = "text";
+
+            document.getElementById(
+                "eye-icon"
+            ).textContent = "Hide";
+
+        } else {
+
+            passwordInput.type = "password";
+
+            document.getElementById(
+                "eye-icon"
+            ).textContent = "Show";
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// SIGN IN
+// ==========================================
+
+form.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        clearError();
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+        if (!email || !password) {
+
+            showError(
+                "Please enter your email and password."
+            );
+
+            return;
+
+        }
+
+        setLoading(true);
+
+        try {
+
+            const result =
+                await window.Clerk.client.signIn.create({
+                    identifier: email,
+                    password: password
+                });
+
+
+            if (
+                result.status === "complete"
+            ) {
+
+                window.location.href = "/";
+
+            } else {
+
+                showError(
+                    "Additional verification is required."
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            let message =
+                "Unable to sign in. Please try again.";
+
+            if (
+                error?.errors?.[0]?.longMessage
+            ) {
+
+                message =
+                    error.errors[0].longMessage;
+
+            }
+
+            showError(message);
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// GOOGLE
+// ==========================================
+
+googleButton.addEventListener(
+    "click",
+    async () => {
+
+        clearError();
+
+        try {
+
+            await window.Clerk.client.signIn.authenticateWithRedirect({
+                strategy: "oauth_google",
+                redirectUrl: "/sign-in",
+                redirectUrlComplete: "/"
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                "Google sign-in failed. Please try again."
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// FORGOT PASSWORD
+// ==========================================
+
+forgotPassword.addEventListener(
+    "click",
+    async () => {
+
+        const email =
+            emailInput.value.trim();
+
+        if (!email) {
+
+            showError(
+                "Enter your email first."
+            );
+
+            emailInput.focus();
+
+            return;
+
+        }
+
+        clearError();
+
+        try {
+
+            await window.Clerk.client.signIn.create({
+                identifier: email
+            });
+
+            showError(
+                "If an account exists for this email, password reset instructions will be sent."
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                "Unable to start password reset."
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
