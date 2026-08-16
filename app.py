@@ -411,9 +411,9 @@ def auth_status():
         "user_id": user_id
     })
 
-@app.get("/")
+@app.route("/")
 def index():
-    return render_template("index.html")
+    return send_from_directory(".", "index.html")
 
 @app.get("/chat")
 def chat_page():
