@@ -236,35 +236,125 @@ def memory_reply(user_text):
 
 @torch.no_grad()
 def generate(user_text):
+    import time
+
+    total_start = time.perf_counter()
+
+    # Tokenization
+    token_start = time.perf_counter()
+
     token_ids = tokenizer.encode(
         "User: " + user_text + "\nAssistant:",
-        add_special_tokens=False,
+        add_special_tokens=False
     )
-    token_ids.insert(0, tokenizer.token_to_id["<BOS>"])
+
+    token_ids.insert(
+        0,
+        tokenizer.token_to_id["<BOS>"]
+    )
+
     token_ids = token_ids[-block_size:]
-    x = torch.tensor([token_ids], dtype=torch.long, device=device)
+
+    token_time = time.perf_counter() - token_start
+
+    # Create tensor
+    x = torch.tensor(
+        [token_ids],
+        dtype=torch.long,
+        device=device
+    )
+
     generated = []
 
+    # Generation
+    generation_start = time.perf_counter()
+
     for _ in range(MAX_NEW_TOKENS):
-        logits, _ = model(x[:, -block_size:])
-        logits = logits[:, -1, :] / TEMPERATURE
-        k = min(TOP_K, logits.size(-1))
-        values, indices = torch.topk(logits, k)
-        filtered = torch.full_like(logits, float("-inf"))
-        filtered.scatter_(1, indices, values)
-        next_token = torch.multinomial(F.softmax(filtered, dim=-1), num_samples=1)
+
+        logits, _ = model(
+            x[:, -block_size:]
+        )
+
+        logits = (
+            logits[:, -1, :]
+            / TEMPERATURE
+        )
+
+        k = min(
+            TOP_K,
+            logits.size(-1)
+        )
+
+        values, indices = torch.topk(
+            logits,
+            k
+        )
+
+        filtered = torch.full_like(
+            logits,
+            float("-inf")
+        )
+
+        filtered.scatter_(
+            1,
+            indices,
+            values
+        )
+
+        next_token = torch.multinomial(
+            F.softmax(
+                filtered,
+                dim=-1
+            ),
+            num_samples=1
+        )
+
         token_id = next_token.item()
 
         if token_id == EOS_ID:
             break
 
         generated.append(token_id)
-        x = torch.cat([x, next_token], dim=1)
+
+        x = torch.cat(
+            [x, next_token],
+            dim=1
+        )
+
         if "User:" in tokenizer.decode(generated):
             break
 
-    response = tokenizer.decode(generated)
-    return response.split("User:")[0].split("\nAssistant:")[0].strip()
+    generation_time = (
+        time.perf_counter()
+        - generation_start
+    )
+
+    response = tokenizer.decode(
+        generated
+    )
+
+    response = (
+        response
+        .split("User:")[0]
+        .split("\nAssistant:")[0]
+        .strip()
+    )
+
+    total_time = (
+        time.perf_counter()
+        - total_start
+    )
+
+    print(
+        f"[TIMING] "
+        f"tokenization={token_time:.3f}s | "
+        f"generation={generation_time:.3f}s | "
+        f"total={total_time:.3f}s | "
+        f"tokens={len(generated)}",
+        flush=True
+    )
+
+    return response
 
 
 @app.get("/")
