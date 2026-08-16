@@ -391,3 +391,12 @@ def chat():
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=False)
+
+@app.route("/sign-in")
+def sign_in():
+    return render_template("sign-in.html")
+
+
+@app.route("/sign-up")
+def sign_up():
+    return render_template("sign-up.html")
