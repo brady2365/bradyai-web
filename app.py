@@ -417,7 +417,7 @@ def index():
 
 @app.get("/chat")
 def chat_page():
-    return render_template("chat.html")
+    return "CHAT ROUTE WORKS"
 
 @app.post("/api/chat")
 def chat():
