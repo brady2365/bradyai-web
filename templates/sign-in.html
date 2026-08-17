@@ -413,13 +413,16 @@ window.addEventListener("load", async () => {
             }
         });
 
-        console.log("CLERK LOADED");
-        console.log("SIGNED IN:", Clerk.isSignedIn);
-        console.log("USER:", Clerk.user);
+        console.log("Clerk loaded successfully.");
+        console.log("Clerk.isSignedIn =", Clerk.isSignedIn);
+        console.log("Clerk.user =", Clerk.user);
 
         if (Clerk.isSignedIn) {
-            console.log("⚠️ Clerk thinks you are already signed in.");
+            console.log("🚨 CLERK THINKS YOU ARE ALREADY SIGNED IN");
+            return;
         }
+
+        console.log("✅ Clerk thinks you are signed out");
 
         Clerk.mountSignIn(
             document.getElementById("clerk-sign-in"),
@@ -442,9 +445,7 @@ window.addEventListener("load", async () => {
         );
 
     } catch (error) {
-
         console.error("CLERK ERROR:", error);
-
     }
 
 });
