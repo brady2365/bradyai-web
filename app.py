@@ -154,6 +154,149 @@ def save_user_memory(user_id, memory):
     finally:
         connection.close()
 
+# =========================================
+# CONVERSATION FUNCTIONS
+# =========================================
+
+def create_conversation(user_id, title="New Chat"):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO conversations (user_id, title)
+                VALUES (%s, %s)
+                RETURNING id
+            """, (user_id, title))
+
+            conversation_id = cursor.fetchone()[0]
+
+        connection.commit()
+        return conversation_id
+
+    finally:
+        connection.close()
+
+
+def get_user_conversations(user_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT id, title, created_at, updated_at
+                FROM conversations
+                WHERE user_id = %s
+                ORDER BY updated_at DESC
+            """, (user_id,))
+
+            rows = cursor.fetchall()
+
+            return [
+                {
+                    "id": row[0],
+                    "title": row[1],
+                    "created_at": row[2].isoformat(),
+                    "updated_at": row[3].isoformat(),
+                }
+                for row in rows
+            ]
+
+    finally:
+        connection.close()
+
+
+def get_conversation_messages(user_id, conversation_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT id, role, content, created_at
+                FROM messages
+                WHERE conversation_id = %s
+                  AND user_id = %s
+                ORDER BY created_at ASC
+            """, (conversation_id, user_id))
+
+            rows = cursor.fetchall()
+
+            return [
+                {
+                    "id": row[0],
+                    "role": row[1],
+                    "content": row[2],
+                    "created_at": row[3].isoformat(),
+                }
+                for row in rows
+            ]
+
+    finally:
+        connection.close()
+
+
+def save_message(user_id, conversation_id, role, content):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+
+            # Make sure this conversation belongs to this user
+            cursor.execute("""
+                SELECT id
+                FROM conversations
+                WHERE id = %s
+                  AND user_id = %s
+            """, (conversation_id, user_id))
+
+            if cursor.fetchone() is None:
+                return False
+
+            cursor.execute("""
+                INSERT INTO messages
+                    (conversation_id, user_id, role, content)
+                VALUES
+                    (%s, %s, %s, %s)
+            """, (
+                conversation_id,
+                user_id,
+                role,
+                content
+            ))
+
+            cursor.execute("""
+                UPDATE conversations
+                SET updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+                  AND user_id = %s
+            """, (conversation_id, user_id))
+
+        connection.commit()
+        return True
+
+    finally:
+        connection.close()
+
+
+def delete_conversation(user_id, conversation_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                DELETE FROM conversations
+                WHERE id = %s
+                  AND user_id = %s
+            """, (conversation_id, user_id))
+
+            deleted = cursor.rowcount > 0
+
+        connection.commit()
+        return deleted
+
+    finally:
+        connection.close()
+
 def load_model():
     print("Loading BradyAI web model on", device)
     checkpoint = torch.load(MODEL_FILE, map_location=device, weights_only=False)
@@ -515,6 +658,99 @@ def auth_status():
     return jsonify({
         "authenticated": True,
         "user_id": user_id
+    })
+
+@app.post("/api/conversations")
+def create_conversation_api():
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in."
+        }), 401
+
+    data = request.get_json(silent=True) or {}
+
+    title = str(
+        data.get("title", "New Chat")
+    ).strip()
+
+    if not title:
+        title = "New Chat"
+
+    conversation_id = create_conversation(
+        user_id,
+        title
+    )
+
+    return jsonify({
+        "id": conversation_id,
+        "title": title
+    })
+
+
+@app.get("/api/conversations")
+def list_conversations():
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in."
+        }), 401
+
+    conversations = get_user_conversations(
+        user_id
+    )
+
+    return jsonify({
+        "conversations": conversations
+    })
+
+
+@app.get("/api/conversations/<int:conversation_id>")
+def get_conversation(conversation_id):
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in."
+        }), 401
+
+    messages = get_conversation_messages(
+        user_id,
+        conversation_id
+    )
+
+    return jsonify({
+        "messages": messages
+    })
+
+
+@app.delete("/api/conversations/<int:conversation_id>")
+def delete_conversation_api(conversation_id):
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in."
+        }), 401
+
+    deleted = delete_conversation(
+        user_id,
+        conversation_id
+    )
+
+    if not deleted:
+        return jsonify({
+            "error": "Conversation not found."
+        }), 404
+
+    return jsonify({
+        "success": True
     })
 
 @app.route("/")
