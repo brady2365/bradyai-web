@@ -2,8 +2,7 @@
 <html lang="en">
 
 <head>
-
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
 
     <meta
         name="viewport"
@@ -17,11 +16,7 @@
         href="{{ url_for('static', filename='style.css') }}"
     >
 
-
-    <!-- =========================================
-         CLERK UI
-    ========================================== -->
-
+    <!-- Clerk UI -->
     <script
         defer
         crossorigin="anonymous"
@@ -29,11 +24,7 @@
         type="text/javascript">
     </script>
 
-
-    <!-- =========================================
-         CLERK JS
-    ========================================== -->
-
+    <!-- Clerk JS -->
     <script
         defer
         crossorigin="anonymous"
@@ -44,7 +35,6 @@
 
 </head>
 
-
 <body>
 
     <main class="app-shell">
@@ -52,17 +42,9 @@
         <header>
 
             <div>
-
-                <p class="eyebrow">
-                    LOCAL AI ASSISTANT
-                </p>
-
-                <h1>
-                    BradyAI
-                </h1>
-
+                <p class="eyebrow">LOCAL AI ASSISTANT</p>
+                <h1>BradyAI</h1>
             </div>
-
 
             <button
                 id="clear-memory"
@@ -83,9 +65,7 @@
 
             <article class="message assistant">
 
-                <strong>
-                    BradyAI
-                </strong>
+                <strong>BradyAI</strong>
 
                 <p>
                     Hi! Ask me something, research a topic,
@@ -106,7 +86,6 @@
                 Message
             </label>
 
-
             <div class="composer-row">
 
                 <textarea
@@ -115,7 +94,6 @@
                     placeholder="Ask BradyAI anything..."
                     required
                 ></textarea>
-
 
                 <button
                     id="send"
@@ -126,21 +104,11 @@
 
             </div>
 
-
             <p class="hint">
-
                 Try:
-
-                <code>
-                    research how do quantum computers work
-                </code>
-
+                <code>research how do quantum computers work</code>
                 or
-
-                <code>
-                    remember I am building a game
-                </code>
-
+                <code>remember I am building a game</code>
             </p>
 
         </form>
@@ -149,6 +117,10 @@
 
 
     <script>
+
+        // =========================================
+        // ELEMENTS
+        // =========================================
 
         const form =
             document.getElementById("chat-form");
@@ -173,25 +145,26 @@
 
                 let attempts = 0;
 
-                const maxAttempts = 200;
-
-                const check = setInterval(() => {
+                const interval = setInterval(() => {
 
                     attempts++;
 
-                    if (typeof Clerk !== "undefined") {
+                    if (
+                        window.Clerk &&
+                        typeof window.Clerk.load === "function"
+                    ) {
 
-                        clearInterval(check);
+                        clearInterval(interval);
 
-                        resolve(Clerk);
+                        resolve(window.Clerk);
 
                         return;
-
                     }
 
-                    if (attempts >= maxAttempts) {
 
-                        clearInterval(check);
+                    if (attempts >= 200) {
+
+                        clearInterval(interval);
 
                         reject(
                             new Error(
@@ -209,30 +182,28 @@
 
 
         // =========================================
-        // CLERK INITIALIZATION
+        // INITIALIZE CLERK ONCE
         // =========================================
 
-        let clerkReady = null;
+        let clerkPromise = null;
 
 
-        async function initializeClerk() {
+        function getClerk() {
 
-            if (!clerkReady) {
+            if (!clerkPromise) {
 
-                clerkReady = (async () => {
+                clerkPromise =
+                    waitForClerk().then(async clerk => {
 
-                    const clerk =
-                        await waitForClerk();
+                        await clerk.load();
 
-                    await clerk.load();
+                        return clerk;
 
-                    return clerk;
-
-                })();
+                    });
 
             }
 
-            return clerkReady;
+            return clerkPromise;
 
         }
 
@@ -333,8 +304,7 @@
 
         async function sendMessage(message) {
 
-            sendButton.disabled =
-                true;
+            sendButton.disabled = true;
 
             sendButton.textContent =
                 "Thinking...";
@@ -343,10 +313,10 @@
             try {
 
                 const clerk =
-                    await initializeClerk();
+                    await getClerk();
 
 
-                // Make sure there is a session
+                // Check session
 
                 if (!clerk.session) {
 
@@ -361,16 +331,16 @@
                 }
 
 
-                // Get Clerk token
+                // Get Clerk session token
 
-                const token =
+                const authToken =
                     await clerk.session.getToken();
 
 
-                if (!token) {
+                if (!authToken) {
 
                     throw new Error(
-                        "Clerk did not provide an authentication token."
+                        "Could not get your Clerk authentication token."
                     );
 
                 }
@@ -380,6 +350,10 @@
                     "Sending authenticated request..."
                 );
 
+
+                // =========================================
+                // SEND TO FLASK API
+                // =========================================
 
                 const response =
                     await fetch(
@@ -392,7 +366,7 @@
                                     "application/json",
 
                                 "Authorization":
-                                    `Bearer ${token}`
+                                    `Bearer ${authToken}`
                             },
 
                             body: JSON.stringify({
@@ -469,7 +443,7 @@
 
 
         // =========================================
-        // FORM SUBMIT
+        // FORM
         // =========================================
 
         form.addEventListener(
@@ -538,7 +512,7 @@
             try {
 
                 const clerk =
-                    await initializeClerk();
+                    await getClerk();
 
 
                 if (!clerk.session) {
@@ -574,7 +548,6 @@
         checkAuthentication();
 
     </script>
-
 
 </body>
 
