@@ -417,12 +417,6 @@ def index():
 
 @app.get("/chat")
 def chat_page():
-
-    user_id = get_authenticated_user()
-
-    if not user_id:
-        return redirect("/sign-in")
-
     return render_template("chat.html")
 
 @app.post("/api/chat")
