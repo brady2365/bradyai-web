@@ -293,17 +293,18 @@
 
                 // Make sure the user is signed in
 
-                if (!Clerk.isSignedIn) {
+                await Clerk.load();
 
+                if (!Clerk.session) {
                     addMessage(
                         "assistant",
                         "BradyAI",
-                        "You are not signed in. Please sign in again."
+                        "You must be signed in to use BradyAI."
                     );
-
                     return;
-
                 }
+
+                const token = await Clerk.session.getToken();
 
 
                 // Get Clerk session
