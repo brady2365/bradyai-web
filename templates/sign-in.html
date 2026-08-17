@@ -402,57 +402,27 @@
     </main>
 
 
-    <script>
+   <script>
+window.addEventListener("load", async () => {
+    try {
+        await Clerk.load();
 
-        window.addEventListener("load", async () => {
+        console.log("Clerk loaded successfully.");
 
-            try {
-
-                await Clerk.load({
-                    ui: {
-                        ClerkUI: window.__internal_ClerkUICtor
-                    }
-                });
-
-                console.log("Clerk loaded successfully.");
-
-                Clerk.mountSignIn(
-                    document.getElementById("clerk-sign-in"),
-                    {
-                        routing: "hash",
-
-                        signUpUrl: "/sign-up",
-
-                        fallbackRedirectUrl: "/chat"
-                    }
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Clerk failed to load:",
-                    error
-                );
-
-                document.getElementById(
-                    "clerk-sign-in"
-                ).innerHTML = `
-                    <div style="
-                        padding:20px;
-                        text-align:center;
-                        color:#ff6b6b;
-                        font-size:14px;
-                    ">
-                        Unable to load sign in.
-                        Please refresh the page.
-                    </div>
-                `;
-
+        Clerk.mountSignIn(
+            document.getElementById("clerk-sign-in"),
+            {
+                routing: "hash",
+                signUpUrl: "/sign-up",
+                afterSignInUrl: "/chat"
             }
+        );
 
-        });
-
-    </script>
+    } catch (error) {
+        console.error("Clerk failed to load:", error);
+    }
+});
+</script>
 
 </body>
 
