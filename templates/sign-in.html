@@ -403,55 +403,47 @@
 
 
 <script>
-window.addEventListener("load", async () => {
+    window.addEventListener("load", async () => {
 
-    try {
+        try {
 
-        await Clerk.load({
-            ui: {
-                ClerkUI: window.__internal_ClerkUICtor
-            }
-        });
+            await Clerk.load({
+                ui: {
+                    ClerkUI: window.__internal_ClerkUICtor
+                }
+            });
 
-        console.log("Clerk loaded successfully.");
-        console.log("Clerk.isSignedIn =", Clerk.isSignedIn);
-        console.log("Clerk.user =", Clerk.user);
+            Clerk.mountSignIn(
+                document.getElementById("clerk-sign-in"),
+                {
+                    routing: "hash",
 
-        if (Clerk.isSignedIn) {
-            console.log("🚨 CLERK THINKS YOU ARE ALREADY SIGNED IN");
-            return;
-        }
+                    signUpUrl: "/sign-up",
 
-        console.log("✅ Clerk thinks you are signed out");
+                    forceRedirectUrl: "/chat",
+                    signUpForceRedirectUrl: "/chat",
 
-        Clerk.mountSignIn(
-            document.getElementById("clerk-sign-in"),
-            {
-                routing: "hash",
-                signUpUrl: "/sign-up",
-
-                forceRedirectUrl: "/chat",
-                signUpForceRedirectUrl: "/chat",
-
-                        appearance: {
-                            variables: {
-                                colorPrimary: "#6366f1",
-                                colorBackground: "#111116",
-                                colorText: "#ffffff",
-                                colorTextSecondary: "#9ca3af",
-                                colorInputBackground: "#0b0b0f",
-                                colorInputText: "#ffffff",
-                                borderRadius: "12px"
-                            }
+                    appearance: {
+                        variables: {
+                            colorPrimary: "#6366f1",
+                            colorBackground: "#111116",
+                            colorText: "#ffffff",
+                            colorTextSecondary: "#9ca3af",
+                            colorInputBackground: "#0b0b0f",
+                            colorInputText: "#ffffff",
+                            borderRadius: "12px"
                         }
                     }
-                );
+                }
+            );
 
-    } catch (error) {
-        console.error("CLERK ERROR:", error);
-    }
+        } catch (error) {
 
-});
+            console.error("CLERK ERROR:", error);
+
+        }
+
+    });
 </script>
 
 </body>
