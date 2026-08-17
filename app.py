@@ -809,6 +809,52 @@ def chat():
     reply = saved_reply if saved_reply is not None else generate(message)
     return jsonify({"reply": reply or "I do not know how to respond to that yet.", "sources": []})
 
+@app.post("/api/conversations/<int:conversation_id>/messages")
+def add_conversation_message(conversation_id):
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in."
+        }), 401
+
+    data = request.get_json(silent=True) or {}
+
+    role = str(
+        data.get("role", "")
+    ).strip()
+
+    content = str(
+        data.get("content", "")
+    ).strip()
+
+    if role not in ("user", "assistant"):
+        return jsonify({
+            "error": "Invalid message role."
+        }), 400
+
+    if not content:
+        return jsonify({
+            "error": "Message content cannot be empty."
+        }), 400
+
+    saved = save_message(
+        user_id,
+        conversation_id,
+        role,
+        content
+    )
+
+    if not saved:
+        return jsonify({
+            "error": "Conversation not found."
+        }), 404
+
+    return jsonify({
+        "success": True
+    })
+
 
 @app.route("/sign-in")
 def sign_in():
