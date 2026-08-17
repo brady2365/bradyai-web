@@ -3,7 +3,7 @@
 
 <head>
 
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
 
     <meta
         name="viewport"
@@ -49,10 +49,6 @@
 
     <main class="app-shell">
 
-        <!-- =========================================
-             HEADER
-        ========================================== -->
-
         <header>
 
             <div>
@@ -79,10 +75,6 @@
         </header>
 
 
-        <!-- =========================================
-             MESSAGES
-        ========================================== -->
-
         <section
             id="messages"
             class="messages"
@@ -104,10 +96,6 @@
 
         </section>
 
-
-        <!-- =========================================
-             CHAT FORM
-        ========================================== -->
 
         <form
             id="chat-form"
@@ -160,10 +148,6 @@
     </main>
 
 
-    <!-- =========================================
-         CHAT JAVASCRIPT
-    ========================================== -->
-
     <script>
 
         const form =
@@ -177,6 +161,80 @@
 
         const sendButton =
             document.getElementById("send");
+
+
+        // =========================================
+        // WAIT FOR CLERK
+        // =========================================
+
+        function waitForClerk() {
+
+            return new Promise((resolve, reject) => {
+
+                let attempts = 0;
+
+                const maxAttempts = 200;
+
+                const check = setInterval(() => {
+
+                    attempts++;
+
+                    if (typeof Clerk !== "undefined") {
+
+                        clearInterval(check);
+
+                        resolve(Clerk);
+
+                        return;
+
+                    }
+
+                    if (attempts >= maxAttempts) {
+
+                        clearInterval(check);
+
+                        reject(
+                            new Error(
+                                "Clerk failed to load."
+                            )
+                        );
+
+                    }
+
+                }, 50);
+
+            });
+
+        }
+
+
+        // =========================================
+        // CLERK INITIALIZATION
+        // =========================================
+
+        let clerkReady = null;
+
+
+        async function initializeClerk() {
+
+            if (!clerkReady) {
+
+                clerkReady = (async () => {
+
+                    const clerk =
+                        await waitForClerk();
+
+                    await clerk.load();
+
+                    return clerk;
+
+                })();
+
+            }
+
+            return clerkReady;
+
+        }
 
 
         // =========================================
@@ -216,8 +274,6 @@
                 body
             );
 
-
-            // Sources
 
             if (sources.length) {
 
@@ -286,64 +342,44 @@
 
             try {
 
-                // Make sure Clerk is loaded
+                const clerk =
+                    await initializeClerk();
 
-                await Clerk.load();
 
+                // Make sure there is a session
 
-                // Make sure the user is signed in
+                if (!clerk.session) {
 
-                await Clerk.load();
-
-                if (!Clerk.session) {
                     addMessage(
                         "assistant",
                         "BradyAI",
                         "You must be signed in to use BradyAI."
                     );
-                    return;
-                }
-
-                const token = await Clerk.session.getToken();
-
-
-                // Get Clerk session
-
-                if (!Clerk.session) {
-
-                    addMessage(
-                        "assistant",
-                        "BradyAI",
-                        "Your Clerk session could not be found. Please sign in again."
-                    );
 
                     return;
 
                 }
 
 
-                // Get authentication token
+                // Get Clerk token
 
                 const token =
-                    await Clerk.session.getToken();
+                    await clerk.session.getToken();
 
 
                 if (!token) {
 
-                    addMessage(
-                        "assistant",
-                        "BradyAI",
-                        "Could not get your authentication token."
+                    throw new Error(
+                        "Clerk did not provide an authentication token."
                     );
-
-                    return;
 
                 }
 
 
-                // =========================================
-                // API REQUEST
-                // =========================================
+                console.log(
+                    "Sending authenticated request..."
+                );
+
 
                 const response =
                     await fetch(
@@ -352,8 +388,11 @@
                             method: "POST",
 
                             headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    `Bearer ${token}`
                             },
 
                             body: JSON.stringify({
@@ -369,8 +408,6 @@
                 );
 
 
-                // Try to read JSON response
-
                 const data =
                     await response.json();
 
@@ -381,8 +418,6 @@
                 );
 
 
-                // Server returned an error
-
                 if (!response.ok) {
 
                     throw new Error(
@@ -392,8 +427,6 @@
 
                 }
 
-
-                // Add BradyAI response
 
                 addMessage(
                     "assistant",
@@ -455,8 +488,6 @@
                 }
 
 
-                // Show user's message
-
                 addMessage(
                     "user",
                     "You",
@@ -464,12 +495,8 @@
                 );
 
 
-                // Clear input
-
                 input.value = "";
 
-
-                // Send to backend
 
                 sendMessage(message);
 
@@ -501,73 +528,52 @@
                 }
             );
 
-    </script>
+
+        // =========================================
+        // AUTHENTICATION
+        // =========================================
+
+        async function checkAuthentication() {
+
+            try {
+
+                const clerk =
+                    await initializeClerk();
 
 
-    <!-- =========================================
-         AUTHENTICATION
-    ========================================== -->
+                if (!clerk.session) {
 
-<script>
-async function checkAuthentication() {
+                    window.location.href =
+                        "/sign-in";
 
-    try {
-
-        await Clerk.load();
-
-        // Wait until Clerk has finished resolving
-        // the current authentication state.
-        await new Promise(resolve => {
-
-            if (Clerk.isLoaded()) {
-                resolve();
-                return;
-            }
-
-            const check = setInterval(() => {
-
-                if (Clerk.isLoaded()) {
-
-                    clearInterval(check);
-                    resolve();
+                    return;
 
                 }
 
-            }, 50);
 
-        });
+                console.log(
+                    "Authenticated as:",
+                    clerk.user?.id
+                );
 
 
-        // Clerk has now finished loading.
-        // Check the actual session.
+            } catch (error) {
 
-        if (!Clerk.session) {
+                console.error(
+                    "Authentication error:",
+                    error
+                );
 
-            window.location.href = "/sign-in";
-
-            return;
+            }
 
         }
 
-        console.log(
-            "Authenticated as:",
-            Clerk.user?.id
-        );
 
+        // Start authentication
 
-    } catch (error) {
+        checkAuthentication();
 
-        console.error(
-            "Authentication error:",
-            error
-        );
-
-    }
-
-}
-
-checkAuthentication();
-</script>
+    </script>
 
 
 </body>
