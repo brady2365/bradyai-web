@@ -507,46 +507,66 @@
          AUTHENTICATION
     ========================================== -->
 
-    <script>
+<script>
+async function checkAuthentication() {
 
-        async function checkAuthentication() {
+    try {
 
-            try {
+        await Clerk.load();
 
-                await Clerk.load();
+        // Wait until Clerk has finished resolving
+        // the current authentication state.
+        await new Promise(resolve => {
 
+            if (Clerk.isLoaded()) {
+                resolve();
+                return;
+            }
 
-                if (!Clerk.isSignedIn) {
+            const check = setInterval(() => {
 
-                    window.location.href =
-                        "/sign-in";
+                if (Clerk.isLoaded()) {
 
-                    return;
+                    clearInterval(check);
+                    resolve();
 
                 }
 
+            }, 50);
 
-                console.log(
-                    "Authenticated as:",
-                    Clerk.user.id
-                );
+        });
 
 
-            } catch (error) {
+        // Clerk has now finished loading.
+        // Check the actual session.
 
-                console.error(
-                    "Authentication error:",
-                    error
-                );
+        if (!Clerk.session) {
 
-            }
+            window.location.href = "/sign-in";
+
+            return;
 
         }
 
+        console.log(
+            "Authenticated as:",
+            Clerk.user?.id
+        );
 
-        checkAuthentication();
 
-    </script>
+    } catch (error) {
+
+        console.error(
+            "Authentication error:",
+            error
+        );
+
+    }
+
+}
+
+checkAuthentication();
+</script>
 
 
 </body>
