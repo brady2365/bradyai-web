@@ -402,26 +402,57 @@
     </main>
 
 
-   <script>
-window.addEventListener("load", async () => {
-    try {
-        await Clerk.load();
+<script>
+    window.addEventListener("load", async () => {
 
-        console.log("Clerk loaded successfully.");
+        try {
 
-        Clerk.mountSignIn(
-            document.getElementById("clerk-sign-in"),
-            {
+            console.log("Waiting for Clerk...");
+
+            await Clerk.load();
+
+            console.log("Clerk loaded!");
+            console.log("Clerk object:", Clerk);
+
+            const container = document.getElementById("clerk-sign-in");
+
+            if (!container) {
+                console.error("Could not find #clerk-sign-in");
+                return;
+            }
+
+            console.log("Mounting Clerk sign-in...");
+
+            Clerk.mountSignIn(container, {
                 routing: "hash",
                 signUpUrl: "/sign-up",
                 afterSignInUrl: "/chat"
-            }
-        );
+            });
 
-    } catch (error) {
-        console.error("Clerk failed to load:", error);
-    }
-});
+            console.log("Sign-in mounted!");
+
+        } catch (error) {
+
+            console.error("CLERK ERROR:", error);
+
+            document.getElementById("clerk-sign-in").innerHTML = `
+                <div style="
+                    padding:20px;
+                    text-align:center;
+                    color:#ff6b6b;
+                    background:#18181c;
+                    border:1px solid #333;
+                    border-radius:12px;
+                ">
+                    <strong>Clerk failed to load.</strong>
+                    <br><br>
+                    Check the browser console for the error.
+                </div>
+            `;
+
+        }
+
+    });
 </script>
 
 </body>
