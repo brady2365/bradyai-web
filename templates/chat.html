@@ -48,98 +48,38 @@
     </form>
   </main>
 
-  <script>
-    const form = document.getElementById('chat-form');
-    const input = document.getElementById('message');
-    const messages = document.getElementById('messages');
-    const sendButton = document.getElementById('send');
-
-    function addMessage(kind, name, text, sources = []) {
-      const card = document.createElement('article');
-      card.className = `message ${kind}`;
-      const title = document.createElement('strong');
-      title.textContent = name;
-      const body = document.createElement('p');
-      body.textContent = text;
-      card.append(title, body);
-
-      if (sources.length) {
-        const list = document.createElement('ul');
-        list.className = 'sources';
-        sources.forEach(source => {
-          const item = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = source.url;
-          link.target = '_blank';
-          link.rel = 'noreferrer';
-          link.textContent = source.title || source.url;
-          item.append(link);
-          list.append(item);
-        });
-        card.append(list);
-      }
-
-      messages.append(card);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    async function sendMessage(message) {
-      sendButton.disabled = true;
-      sendButton.textContent = 'Thinking...';
-      try {
-        const token = await Clerk.session.getToken();
-
-        const response = await fetch("https://bradyai-web.onrender.com/api/chat", {
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-
-            body: JSON.stringify({
-                message: message
-            })
-        });
-        const data = await response.json();
-        addMessage('assistant', 'BradyAI', data.reply || data.error || 'Something went wrong.', data.sources || []);
-      } catch {
-        addMessage('assistant', 'BradyAI', 'Could not reach the local BradyAI server.');
-      } finally {
-        sendButton.disabled = false;
-        sendButton.textContent = 'Send';
-        input.focus();
-      }
-    }
-
-    form.addEventListener('submit', event => {
-      event.preventDefault();
-      const message = input.value.trim();
-      if (!message) return;
-      addMessage('user', 'You', message);
-      input.value = '';
-      sendMessage(message);
-    });
-
-    document.getElementById('clear-memory').addEventListener('click', () => {
-      addMessage('user', 'You', 'clear memory');
-      sendMessage('clear memory');
-    });
-  </script>
-
 <script>
 async function checkAuthentication() {
 
     try {
 
-        await Clerk.load();
+        await Clerk.load({
+            ui: {
+                ClerkUI: window.__internal_ClerkUICtor
+            }
+        });
 
-        if (!Clerk.isSignedIn) {
+        // Wait for Clerk to finish resolving the session
+        await new Promise(resolve => {
+            if (Clerk.isLoaded()) {
+                resolve();
+            } else {
+                const interval = setInterval(() => {
+                    if (Clerk.isLoaded()) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }, 50);
+            }
+        });
+
+        // Check for an actual active session
+        if (!Clerk.session) {
             window.location.href = "/sign-in";
             return;
         }
 
-        console.log("Authenticated as:", Clerk.user.id);
+        console.log("Authenticated as:", Clerk.user?.id);
 
     } catch (error) {
 
