@@ -37,6 +37,8 @@ def init_database():
 
     try:
         with connection.cursor() as cursor:
+
+            # User-specific memory
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS user_memories (
                     user_id TEXT PRIMARY KEY,
@@ -44,30 +46,34 @@ def init_database():
                     updated_at TIMESTAMP WITH TIME ZONE
                         DEFAULT CURRENT_TIMESTAMP
                 )
+            """)
 
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS conversations (
-                        id SERIAL PRIMARY KEY,
-                        user_id TEXT NOT NULL,
-                        title TEXT NOT NULL DEFAULT 'New Chat',
-                        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-                    )
-                """)
+            # User conversations
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS conversations (
+                    id SERIAL PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    title TEXT NOT NULL DEFAULT 'New Chat',
+                    created_at TIMESTAMP WITH TIME ZONE
+                        DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP WITH TIME ZONE
+                        DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
 
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS messages (
-                        id SERIAL PRIMARY KEY,
-                        conversation_id INTEGER NOT NULL
+            # Messages inside conversations
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS messages (
+                    id SERIAL PRIMARY KEY,
+                    conversation_id INTEGER NOT NULL
                         REFERENCES conversations(id)
                         ON DELETE CASCADE,
-                        user_id TEXT NOT NULL,
-                        role TEXT NOT NULL,
-                        content TEXT NOT NULL,
-                        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-                        )
-                    """)
-                
+                    user_id TEXT NOT NULL,
+                    role TEXT NOT NULL,
+                    content TEXT NOT NULL,
+                    created_at TIMESTAMP WITH TIME ZONE
+                        DEFAULT CURRENT_TIMESTAMP
+                )
             """)
 
         connection.commit()
