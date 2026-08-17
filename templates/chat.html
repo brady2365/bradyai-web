@@ -128,37 +128,28 @@
   </script>
 
 <script>
-
 async function checkAuthentication() {
 
     try {
 
         await Clerk.load();
 
-        if (!Clerk.user) {
+        if (!Clerk.isSignedIn) {
             window.location.href = "/sign-in";
             return;
         }
 
-        console.log(
-            "Authenticated as:",
-            Clerk.user.id
-        );
+        console.log("Authenticated as:", Clerk.user.id);
 
     } catch (error) {
 
-        console.error(
-            "Authentication error:",
-            error
-        );
+        console.error("Authentication error:", error);
 
         window.location.href = "/sign-in";
     }
 }
 
-
 checkAuthentication();
-
 </script>
   
 </body>
