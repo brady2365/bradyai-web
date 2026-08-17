@@ -2,25 +2,35 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Create Account — BradyAI</title>
 
-    <!-- Clerk -->
-    <script
-      defer
-      crossorigin="anonymous"
-      src="https://shining-insect-593.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"
-      type="text/javascript">
-    </script>
+
+    <!-- Clerk UI -->
 
     <script
-      defer
-      crossorigin="anonymous"
-      data-clerk-publishable-key="pk_test_c2hpbmluZy1pbnNlY3QtNTkzLmNsZXJrLmFjY291bnRzLmRldiQ"
-      src="https://shining-insect-593.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"
-      type="text/javascript">
+        defer
+        crossorigin="anonymous"
+        src="https://shining-insect-593.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"
+        type="text/javascript">
+    </script>
+
+
+    <!-- Clerk JS -->
+
+    <script
+        defer
+        crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_c2hpbmluZy1pbnNlY3QtNTkzLmNsZXJrLmFjY291bnRzLmRldiQ"
+        src="https://shining-insect-593.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"
+        type="text/javascript">
     </script>
 
 
@@ -33,192 +43,416 @@
         }
 
 
+        html,
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #050505;
-            color: white;
-            min-height: 100vh;
-            overflow: hidden;
+            width: 100%;
+            min-height: 100%;
         }
 
 
-        /* ================================
+        body {
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #050505;
+
+            color: white;
+
+            min-height: 100vh;
+
+            overflow-x: hidden;
+
+        }
+
+
+        /* =========================================
            BACKGROUND
-        ================================= */
+        ========================================= */
 
         .background {
+
             position: fixed;
+
             inset: 0;
+
+            z-index: 0;
+
             overflow: hidden;
+
             pointer-events: none;
+
+        }
+
+
+        .background::before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+
+                radial-gradient(
+                    circle at 20% 15%,
+                    rgba(88,101,242,0.15),
+                    transparent 35%
+                ),
+
+                radial-gradient(
+                    circle at 80% 85%,
+                    rgba(124,58,237,0.12),
+                    transparent 35%
+                );
+
         }
 
 
         .glow {
+
             position: absolute;
+
             width: 500px;
+
             height: 500px;
+
             border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.18;
+
+            filter: blur(140px);
+
+            opacity: 0.14;
+
         }
 
 
         .glow.one {
+
             background: #5865f2;
-            top: -250px;
-            left: -150px;
+
+            top: -280px;
+
+            left: -200px;
+
         }
 
 
         .glow.two {
+
             background: #7c3aed;
+
             bottom: -300px;
-            right: -150px;
+
+            right: -200px;
+
         }
 
 
-        /* ================================
+        /* =========================================
+           GRID
+        ========================================= */
+
+        .grid {
+
+            position: absolute;
+
+            inset: 0;
+
+            background-image:
+
+                linear-gradient(
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px
+                ),
+
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px
+                );
+
+            background-size: 55px 55px;
+
+            mask-image:
+                linear-gradient(
+                    to bottom,
+                    black,
+                    transparent 80%
+                );
+
+        }
+
+
+        /* =========================================
            PAGE
-        ================================= */
+        ========================================= */
 
         .page {
+
+            position: relative;
+
+            z-index: 1;
+
             min-height: 100vh;
+
             display: flex;
-            justify-content: center;
+
             align-items: center;
-            padding: 25px;
+
+            justify-content: center;
+
+            padding: 40px 20px;
+
         }
 
 
-        /* ================================
+        /* =========================================
            CARD
-        ================================= */
+        ========================================= */
 
         .card {
+
             width: 100%;
-            max-width: 430px;
 
-            background: rgba(15, 15, 18, 0.92);
+            max-width: 460px;
 
-            border: 1px solid rgba(
-                255,
-                255,
-                255,
-                0.09
-            );
+            padding: 42px;
 
-            border-radius: 22px;
+            background:
 
-            padding: 38px 34px;
+                linear-gradient(
+                    145deg,
+                    rgba(20,20,24,0.96),
+                    rgba(10,10,12,0.96)
+                );
+
+            border:
+                1px solid rgba(255,255,255,0.10);
+
+            border-radius: 24px;
 
             box-shadow:
-                0 25px 80px rgba(0, 0, 0, 0.55),
-                0 0 80px rgba(88, 101, 242, 0.06);
 
-            backdrop-filter: blur(20px);
+                0 30px 100px rgba(0,0,0,0.60),
+
+                0 0 100px rgba(88,101,242,0.07);
+
+            backdrop-filter: blur(30px);
+
+            animation: cardIn 0.5s ease;
+
         }
 
 
-        /* ================================
+        @keyframes cardIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(15px)
+                    scale(0.98);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+
+            }
+
+        }
+
+
+        /* =========================================
            BRAND
-        ================================= */
+        ========================================= */
 
         .brand {
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
-            gap: 11px;
-            margin-bottom: 30px;
+
+            gap: 12px;
+
+            margin-bottom: 32px;
+
         }
 
 
         .brand-logo {
-            width: 42px;
-            height: 42px;
 
-            border-radius: 12px;
+            width: 44px;
+
+            height: 44px;
 
             display: flex;
+
             align-items: center;
+
             justify-content: center;
 
-            background: linear-gradient(
-                135deg,
-                #5865f2,
-                #7c3aed
-            );
+            border-radius: 13px;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #5865f2,
+                    #7c3aed
+                );
 
             font-size: 22px;
+
             font-weight: 800;
 
             box-shadow:
-                0 8px 25px rgba(
+                0 10px 30px rgba(
                     88,
                     101,
                     242,
-                    0.3
+                    0.30
                 );
+
         }
 
 
         .brand-name {
-            font-size: 22px;
+
+            font-size: 23px;
+
             font-weight: 700;
-            letter-spacing: -0.5px;
+
+            letter-spacing: -0.7px;
+
         }
 
 
-        /* ================================
+        /* =========================================
            HEADER
-        ================================= */
+        ========================================= */
 
         .header {
+
             text-align: center;
+
             margin-bottom: 28px;
+
         }
 
 
         .header h1 {
-            font-size: 30px;
-            line-height: 1.2;
-            letter-spacing: -1px;
+
+            font-size: 31px;
+
+            font-weight: 700;
+
+            letter-spacing: -1.2px;
+
             margin-bottom: 9px;
+
         }
 
 
         .header p {
-            color: #8e8e98;
+
+            color: #92929d;
+
             font-size: 14px;
+
+            line-height: 1.5;
+
         }
 
 
-        /* ================================
+        /* =========================================
            CLERK
-        ================================= */
+        ========================================= */
 
         #clerk-sign-up {
+
             width: 100%;
+
         }
 
 
-        /* ================================
-           MOBILE
-        ================================= */
+        /* =========================================
+           FOOTER
+        ========================================= */
 
-        @media (max-width: 500px) {
+        .footer {
+
+            margin-top: 25px;
+
+            text-align: center;
+
+            color: #666671;
+
+            font-size: 12px;
+
+        }
+
+
+        .footer a {
+
+            color: #8b8bf4;
+
+            text-decoration: none;
+
+        }
+
+
+        .footer a:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 520px) {
 
             .page {
-                padding: 15px;
+
+                padding: 20px 14px;
+
             }
 
             .card {
-                padding: 30px 22px;
-                border-radius: 18px;
+
+                padding: 30px 20px;
+
+                border-radius: 20px;
+
             }
 
             .header h1 {
-                font-size: 26px;
+
+                font-size: 27px;
+
+            }
+
+            .brand {
+
+                margin-bottom: 27px;
+
             }
 
         }
@@ -230,11 +464,14 @@
 
 <body>
 
+
     <div class="background">
 
         <div class="glow one"></div>
 
         <div class="glow two"></div>
+
+        <div class="grid"></div>
 
     </div>
 
@@ -242,6 +479,9 @@
     <main class="page">
 
         <section class="card">
+
+
+            <!-- BRAND -->
 
             <div class="brand">
 
@@ -256,6 +496,8 @@
             </div>
 
 
+            <!-- HEADER -->
+
             <div class="header">
 
                 <h1>
@@ -263,13 +505,26 @@
                 </h1>
 
                 <p>
-                    Join BradyAI and start chatting
+                    Join BradyAI and start chatting.
                 </p>
 
             </div>
 
 
+            <!-- CLERK -->
+
             <div id="clerk-sign-up"></div>
+
+
+            <div class="footer">
+
+                By continuing, you agree to the BradyAI
+                <a href="#">Terms</a>
+                and
+                <a href="#">Privacy Policy</a>.
+
+            </div>
+
 
         </section>
 
@@ -282,7 +537,15 @@
 
             try {
 
-                await Clerk.load();
+                await Clerk.load({
+
+                    ui: {
+                        ClerkUI:
+                            window.__internal_ClerkUICtor
+                    }
+
+                });
+
 
                 console.log(
                     "Clerk loaded successfully."
@@ -290,14 +553,23 @@
 
 
                 Clerk.mountSignUp(
+
                     document.getElementById(
                         "clerk-sign-up"
                     ),
+
                     {
+
                         routing: "hash",
-                        signInUrl: "/sign-in"
+
+                        signInUrl: "/sign-in",
+
+                        fallbackRedirectUrl: "/chat"
+
                     }
+
                 );
+
 
             } catch (error) {
 
@@ -306,11 +578,31 @@
                     error
                 );
 
+
+                document.getElementById(
+                    "clerk-sign-up"
+                ).innerHTML = `
+
+                    <div style="
+                        padding:20px;
+                        text-align:center;
+                        color:#ff6b6b;
+                        font-size:14px;
+                    ">
+
+                        Unable to load sign up.
+                        Please refresh the page.
+
+                    </div>
+
+                `;
+
             }
 
         });
 
     </script>
+
 
 </body>
 
