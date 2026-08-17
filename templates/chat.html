@@ -53,39 +53,18 @@ async function checkAuthentication() {
 
     try {
 
-        await Clerk.load({
-            ui: {
-                ClerkUI: window.__internal_ClerkUICtor
-            }
-        });
+        await Clerk.load();
 
-        // Wait for Clerk to finish resolving the session
-        await new Promise(resolve => {
-            if (Clerk.isLoaded()) {
-                resolve();
-            } else {
-                const interval = setInterval(() => {
-                    if (Clerk.isLoaded()) {
-                        clearInterval(interval);
-                        resolve();
-                    }
-                }, 50);
-            }
-        });
-
-        // Check for an actual active session
-        if (!Clerk.session) {
+        if (!Clerk.isSignedIn) {
             window.location.href = "/sign-in";
             return;
         }
 
-        console.log("Authenticated as:", Clerk.user?.id);
+        console.log("Authenticated as:", Clerk.user.id);
 
     } catch (error) {
 
         console.error("Authentication error:", error);
-
-        window.location.href = "/sign-in";
     }
 }
 
