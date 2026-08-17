@@ -5,3 +5,4 @@ beautifulsoup4>=4.12,<5.0
 torch>=2.0
 numpy>=1.26,<3.0
 clerk-backend-api
+psycopg2-binary
