@@ -7,6 +7,7 @@ import torch
 import torch.nn.functional as F
 from flask import Flask, jsonify, render_template, request, send_from_directory, redirect
 from clerk_backend_api import Clerk
+from clerk_backend_api.security.types import AuthenticateRequestOptions
 
 from model import BradyAI
 from research import research
@@ -369,20 +370,19 @@ def get_authenticated_user():
         None if not authenticated
     """
 
-    authorization = request.headers.get("Authorization", "")
-
-    if not authorization.startswith("Bearer "):
-        return None
-
-    token = authorization[7:].strip()
-
-    if not token:
-        return None
-
     try:
+
         result = clerk.authenticate_request(
             request,
-            accepts_token=["session_token"],
+            AuthenticateRequestOptions(
+                accepts_token=["session_token"]
+            )
+        )
+
+        print(
+            f"[CLERK] signed_in={result.is_signed_in} "
+            f"reason={getattr(result, 'reason', None)}",
+            flush=True
         )
 
         if not result.is_signed_in:
@@ -391,7 +391,12 @@ def get_authenticated_user():
         return result.payload.get("sub")
 
     except Exception as error:
-        print("Clerk authentication error:", error, flush=True)
+
+        print(
+            f"[CLERK AUTH ERROR] {error}",
+            flush=True
+        )
+
         return None
 
 
