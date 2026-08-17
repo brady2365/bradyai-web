@@ -38,7 +38,10 @@ def init_database():
     try:
         with connection.cursor() as cursor:
 
-            # User-specific memory
+            # =========================================
+            # USER MEMORIES
+            # =========================================
+
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS user_memories (
                     user_id TEXT PRIMARY KEY,
@@ -48,39 +51,31 @@ def init_database():
                 )
             """)
 
-            # User conversations
+            # =========================================
+            # CHAT HISTORY
+            # =========================================
+
             cursor.execute("""
-                CREATE TABLE IF NOT EXISTS conversations (
-                    id SERIAL PRIMARY KEY,
+                CREATE TABLE IF NOT EXISTS chat_messages (
+                    id BIGSERIAL PRIMARY KEY,
                     user_id TEXT NOT NULL,
-                    title TEXT NOT NULL DEFAULT 'New Chat',
+                    role TEXT NOT NULL,
+                    message TEXT NOT NULL,
                     created_at TIMESTAMP WITH TIME ZONE
-                        DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP WITH TIME ZONE
                         DEFAULT CURRENT_TIMESTAMP
                 )
             """)
 
-            # Messages inside conversations
+            # Makes loading a user's history faster
             cursor.execute("""
-                CREATE TABLE IF NOT EXISTS messages (
-                    id SERIAL PRIMARY KEY,
-                    conversation_id INTEGER NOT NULL
-                        REFERENCES conversations(id)
-                        ON DELETE CASCADE,
-                    user_id TEXT NOT NULL,
-                    role TEXT NOT NULL,
-                    content TEXT NOT NULL,
-                    created_at TIMESTAMP WITH TIME ZONE
-                        DEFAULT CURRENT_TIMESTAMP
-                )
+                CREATE INDEX IF NOT EXISTS idx_chat_messages_user_id
+                ON chat_messages(user_id)
             """)
 
         connection.commit()
 
     finally:
         connection.close()
-
 clerk = Clerk(
     bearer_auth=os.environ.get("CLERK_SECRET_KEY")
 )
@@ -148,6 +143,81 @@ def save_user_memory(user_id, memory):
                 user_id,
                 json.dumps(memory)
             ))
+
+        connection.commit()
+
+    finally:
+        connection.close()
+
+# =========================================
+# CHAT HISTORY
+# =========================================
+
+def save_chat_message(user_id, role, message):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute("""
+                INSERT INTO chat_messages
+                    (user_id, role, message)
+                VALUES
+                    (%s, %s, %s)
+            """, (
+                user_id,
+                role,
+                message
+            ))
+
+        connection.commit()
+
+    finally:
+        connection.close()
+
+
+def get_chat_history(user_id, limit=100):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute("""
+                SELECT role, message, created_at
+                FROM chat_messages
+                WHERE user_id = %s
+                ORDER BY created_at ASC
+                LIMIT %s
+            """, (
+                user_id,
+                limit
+            ))
+
+            rows = cursor.fetchall()
+
+            return [
+                {
+                    "role": row[0],
+                    "message": row[1],
+                    "created_at": row[2].isoformat()
+                }
+                for row in rows
+            ]
+
+    finally:
+        connection.close()
+
+
+def clear_chat_history(user_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute("""
+                DELETE FROM chat_messages
+                WHERE user_id = %s
+            """, (user_id,))
 
         connection.commit()
 
@@ -761,6 +831,38 @@ def index():
 def chat_page():
     return render_template("chat.html")
 
+@app.get("/api/chat/history")
+def chat_history():
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in."
+        }), 401
+
+    history = get_chat_history(user_id)
+
+    return jsonify({
+        "messages": history
+    })
+
+@app.post("/api/chat/clear")
+def clear_chat():
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in."
+        }), 401
+
+    clear_chat_history(user_id)
+
+    return jsonify({
+        "success": True
+    })
+
 @app.post("/api/chat")
 def chat():
 
@@ -798,16 +900,59 @@ def chat():
         save_user_memory(user_id, session_memory)
         return jsonify({"reply": "Memory cleared.", "sources": []})
 
-    if needs_research(message):
-        result = research(clean_research_query(message))
-        return jsonify({"reply": build_research_answer(result), "sources": result.get("sources", [])})
+if needs_research(message):
 
-    saved_reply = memory_reply(
-        message,
-        user_id
+    result = research(
+        clean_research_query(message)
     )
-    reply = saved_reply if saved_reply is not None else generate(message)
-    return jsonify({"reply": reply or "I do not know how to respond to that yet.", "sources": []})
+
+    reply = build_research_answer(result)
+    sources = result.get("sources", [])
+
+    save_chat_message(
+        user_id,
+        "user",
+        message
+    )
+
+    save_chat_message(
+        user_id,
+        "assistant",
+        reply
+    )
+
+    return jsonify({
+        "reply": reply,
+        "sources": sources
+    })
+
+saved_reply = memory_reply(
+    message,
+    user_id
+)
+
+reply = saved_reply if saved_reply is not None else generate(message)
+
+reply = reply or "I do not know how to respond to that yet."
+
+# Save user's message
+save_chat_message(
+    user_id,
+    "user",
+    message
+)
+
+# Save BradyAI's response
+save_chat_message(
+    user_id,
+    "assistant",
+    reply
+)
+
+return jsonify({
+    "reply": reply,
+    "sources": []
+})
 
 @app.post("/api/conversations/<int:conversation_id>/messages")
 def add_conversation_message(conversation_id):
