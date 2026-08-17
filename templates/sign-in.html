@@ -430,19 +430,22 @@ window.addEventListener("load", async () => {
                 routing: "hash",
                 signUpUrl: "/sign-up",
 
-                appearance: {
-                    variables: {
-                        colorPrimary: "#6366f1",
-                        colorBackground: "#111116",
-                        colorText: "#ffffff",
-                        colorTextSecondary: "#9ca3af",
-                        colorInputBackground: "#0b0b0f",
-                        colorInputText: "#ffffff",
-                        borderRadius: "12px"
+                forceRedirectUrl: "/chat",
+                signUpForceRedirectUrl: "/chat",
+
+                        appearance: {
+                            variables: {
+                                colorPrimary: "#6366f1",
+                                colorBackground: "#111116",
+                                colorText: "#ffffff",
+                                colorTextSecondary: "#9ca3af",
+                                colorInputBackground: "#0b0b0f",
+                                colorInputText: "#ffffff",
+                                borderRadius: "12px"
+                            }
+                        }
                     }
-                }
-            }
-        );
+                );
 
     } catch (error) {
         console.error("CLERK ERROR:", error);
