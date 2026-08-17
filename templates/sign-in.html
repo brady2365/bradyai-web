@@ -407,48 +407,39 @@
 
         try {
 
-            console.log("Waiting for Clerk...");
-
-            await Clerk.load();
-
-            console.log("Clerk loaded!");
-            console.log("Clerk object:", Clerk);
-
-            const container = document.getElementById("clerk-sign-in");
-
-            if (!container) {
-                console.error("Could not find #clerk-sign-in");
-                return;
-            }
-
-            console.log("Mounting Clerk sign-in...");
-
-            Clerk.mountSignIn(container, {
-                routing: "hash",
-                signUpUrl: "/sign-up",
-                afterSignInUrl: "/chat"
+            await Clerk.load({
+                ui: {
+                    ClerkUI: window.__internal_ClerkUICtor
+                }
             });
 
-            console.log("Sign-in mounted!");
+            console.log("Clerk loaded successfully.");
+
+            Clerk.mountSignIn(
+                document.getElementById("clerk-sign-in"),
+                {
+                    routing: "hash",
+                    signUpUrl: "/sign-up",
+                    appearance: {
+                        variables: {
+                            colorPrimary: "#6366f1",
+                            colorBackground: "#111116",
+                            colorText: "#ffffff",
+                            colorTextSecondary: "#9ca3af",
+                            colorInputBackground: "#0b0b0f",
+                            colorInputText: "#ffffff",
+                            borderRadius: "12px"
+                        }
+                    }
+                }
+            );
 
         } catch (error) {
 
-            console.error("CLERK ERROR:", error);
-
-            document.getElementById("clerk-sign-in").innerHTML = `
-                <div style="
-                    padding:20px;
-                    text-align:center;
-                    color:#ff6b6b;
-                    background:#18181c;
-                    border:1px solid #333;
-                    border-radius:12px;
-                ">
-                    <strong>Clerk failed to load.</strong>
-                    <br><br>
-                    Check the browser console for the error.
-                </div>
-            `;
+            console.error(
+                "CLERK ERROR:",
+                error
+            );
 
         }
 
