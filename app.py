@@ -40,15 +40,44 @@ def load_memory():
         return {}
 
 
-session_memory = {} if PUBLIC_MODE else load_memory()
+# =========================================
+# ACCOUNT-SPECIFIC MEMORY
+# =========================================
+
+def get_user_memory(user_id):
+    """
+    Get the memory belonging to one Clerk user.
+    """
+
+    if PUBLIC_MODE:
+        return {}
+
+    all_memory = load_memory()
+
+    if user_id not in all_memory:
+        all_memory[user_id] = {}
+
+    return all_memory[user_id]
 
 
-def save_memory():
+def save_user_memory(user_id, memory):
+    """
+    Save memory for one specific Clerk user.
+    """
+
     if PUBLIC_MODE:
         return
 
+    all_memory = load_memory()
+
+    all_memory[user_id] = memory
+
     with MEMORY_FILE.open("w", encoding="utf-8") as file:
-        json.dump(session_memory, file, indent=2)
+        json.dump(
+            all_memory,
+            file,
+            indent=2
+        )
 
 
 def load_model():
@@ -139,7 +168,10 @@ def build_research_answer(result):
     return "\n\n".join(parts) if len(parts) > 1 else "I found sources but no useful summary."
 
 
-def memory_reply(user_text):
+def memory_reply(user_text, user_id):
+    
+    session_memory = get_user_memory(user_id)
+    
     text = user_text.strip()
     lower = text.lower()
 
@@ -161,21 +193,21 @@ def memory_reply(user_text):
     if name_match:
         name = name_match.group(1)
         session_memory["name"] = name
-        save_memory()
+        save_user_memory(user_id, session_memory)
         return f"Nice to meet you, {name}. I will remember your name."
 
     color_match = re.search(r"^my favorite colo[u]?r is\s+([A-Za-z]+)[.!]?$", text, re.I)
     if color_match:
         color = color_match.group(1).lower()
         session_memory["favorite_color"] = color
-        save_memory()
+        save_user_memory(user_id, session_memory)
         return f"I will remember that your favorite color is {color}."
 
     learning_match = re.search(r"^i am learning\s+(.+?)[.!]?$", text, re.I)
     if learning_match:
         subject = learning_match.group(1).strip()
         session_memory["learning"] = subject
-        save_memory()
+        save_user_memory(user_id, session_memory)
         return f"I will remember that you are learning {subject}."
 
     remember_match = re.search(r"^remember\s+(.+)$", text, re.I)
@@ -185,7 +217,7 @@ def memory_reply(user_text):
             notes = session_memory.setdefault("notes", [])
             if note not in notes:
                 notes.append(note)
-                save_memory()
+                save_user_memory(user_id, session_memory)
             return "I will remember: " + note
 
     forget_match = re.search(r"^forget\s+(.+)$", text, re.I)
@@ -194,12 +226,12 @@ def memory_reply(user_text):
         notes = session_memory.get("notes", [])
         if requested.lower() in ("all notes", "my notes"):
             session_memory["notes"] = []
-            save_memory()
+            save_user_memory(user_id, session_memory)
             return "I forgot all of your saved notes."
         for note in notes:
             if note.lower() == requested.lower():
                 notes.remove(note)
-                save_memory()
+                save_user_memory(user_id, session_memory)
                 return "I forgot: " + note
         return "I could not find that note. Use 'show my notes' to see saved notes."
 
@@ -441,20 +473,34 @@ def chat():
         return jsonify({"error": "Enter a message first."}), 400
 
     if message.lower() == "clear memory":
+
         if PUBLIC_MODE:
             return jsonify({
                 "reply": "Personal memory is disabled on this public demo.",
                 "sources": [],
             })
+
+        save_user_memory(
+            user_id,
+            {}
+        )
+
+        return jsonify({
+            "reply": "Memory cleared.",
+            "sources": []
+        })
         session_memory.clear()
-        save_memory()
+        save_user_memory(user_id, session_memory)
         return jsonify({"reply": "Memory cleared.", "sources": []})
 
     if needs_research(message):
         result = research(clean_research_query(message))
         return jsonify({"reply": build_research_answer(result), "sources": result.get("sources", [])})
 
-    saved_reply = memory_reply(message)
+    saved_reply = memory_reply(
+        message,
+        user_id
+    )
     reply = saved_reply if saved_reply is not None else generate(message)
     return jsonify({"reply": reply or "I do not know how to respond to that yet.", "sources": []})
 
