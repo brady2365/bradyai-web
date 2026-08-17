@@ -1,13 +1,13 @@
 import json
 import os
 import re
-from pathlib import Path
 
 import torch
 import torch.nn.functional as F
 from flask import Flask, jsonify, render_template, request, send_from_directory, redirect
 from clerk_backend_api import Clerk
 from clerk_backend_api.security.types import AuthenticateRequestOptions
+import psycopg2
 
 from model import BradyAI
 from research import research
@@ -15,7 +15,6 @@ from tokenizer import BPETokenizer
 
 
 MODEL_FILE = "bradyai_v3.pt"
-MEMORY_FILE = Path("brady_memory.json")
 MAX_NEW_TOKENS = 12
 TEMPERATURE = 0.25
 TOP_K = 5
@@ -24,20 +23,40 @@ PUBLIC_MODE = os.environ.get("PUBLIC_MODE", "false").lower() == "true"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 app = Flask(__name__)
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+
+def get_db_connection():
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL is not configured.")
+
+    return psycopg2.connect(DATABASE_URL)
+
+def init_database():
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS user_memories (
+                    user_id TEXT PRIMARY KEY,
+                    memory JSONB NOT NULL DEFAULT '{}'::jsonb,
+                    updated_at TIMESTAMP WITH TIME ZONE
+                        DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+
+        connection.commit()
+
+    finally:
+        connection.close()
+
 clerk = Clerk(
     bearer_auth=os.environ.get("CLERK_SECRET_KEY")
 )
 
-def load_memory():
-    if not MEMORY_FILE.exists():
-        return {}
+init_database()
 
-    try:
-        with MEMORY_FILE.open("r", encoding="utf-8") as file:
-            value = json.load(file)
-        return value if isinstance(value, dict) else {}
-    except (OSError, json.JSONDecodeError):
-        return {}
 
 
 # =========================================
@@ -45,40 +64,65 @@ def load_memory():
 # =========================================
 
 def get_user_memory(user_id):
-    """
-    Get the memory belonging to one Clerk user.
-    """
+    connection = get_db_connection()
 
-    if PUBLIC_MODE:
-        return {}
+    try:
+        with connection.cursor() as cursor:
 
-    all_memory = load_memory()
+            cursor.execute("""
+                SELECT memory
+                FROM user_memories
+                WHERE user_id = %s
+            """, (user_id,))
 
-    if user_id not in all_memory:
-        all_memory[user_id] = {}
+            row = cursor.fetchone()
 
-    return all_memory[user_id]
+            if row is None:
+                memory = {}
+
+                cursor.execute("""
+                    INSERT INTO user_memories (user_id, memory)
+                    VALUES (%s, %s)
+                """, (
+                    user_id,
+                    json.dumps(memory)
+                ))
+
+                connection.commit()
+
+                return memory
+
+            return row[0] or {}
+
+    finally:
+        connection.close()
 
 
 def save_user_memory(user_id, memory):
-    """
-    Save memory for one specific Clerk user.
-    """
+    connection = get_db_connection()
 
-    if PUBLIC_MODE:
-        return
+    try:
+        with connection.cursor() as cursor:
 
-    all_memory = load_memory()
+            cursor.execute("""
+                INSERT INTO user_memories
+                    (user_id, memory, updated_at)
+                VALUES
+                    (%s, %s, CURRENT_TIMESTAMP)
 
-    all_memory[user_id] = memory
+                ON CONFLICT (user_id)
+                DO UPDATE SET
+                    memory = EXCLUDED.memory,
+                    updated_at = CURRENT_TIMESTAMP
+            """, (
+                user_id,
+                json.dumps(memory)
+            ))
 
-    with MEMORY_FILE.open("w", encoding="utf-8") as file:
-        json.dump(
-            all_memory,
-            file,
-            indent=2
-        )
+        connection.commit()
 
+    finally:
+        connection.close()
 
 def load_model():
     print("Loading BradyAI web model on", device)
@@ -183,11 +227,6 @@ def memory_reply(user_text, user_id):
         "what notes do you remember", "what do you remember",
         "what is my name", "remember my name", "what am i learning",
     )
-    if PUBLIC_MODE and any(phrase in lower for phrase in memory_phrases):
-        return (
-            "Personal memory is available in the local BradyAI app, "
-            "but is disabled on this public demo for privacy."
-        )
 
     name_match = re.search(r"^(?:my name is|call me)\s+([A-Za-z][A-Za-z'-]*)[.!]?$", text, re.I)
     if name_match:
