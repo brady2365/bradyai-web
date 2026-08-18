@@ -518,23 +518,41 @@ function addMessage(
   sources = []
 ) {
 
+  const row =
+    document.createElement("div");
+
+  row.className =
+    `message-row ${kind}`;
+
+
+  /*
+    BradyAI gets an avatar outside
+    of the message bubble.
+  */
+
+  if (kind === "assistant") {
+
+    const avatar =
+      document.createElement("div");
+
+    avatar.className =
+      "message-avatar";
+
+    avatar.textContent =
+      "B";
+
+    row.appendChild(
+      avatar
+    );
+
+  }
+
+
   const card =
     document.createElement("article");
 
   card.className =
     `message ${kind}`;
-
-
-  const avatar =
-    document.createElement("div");
-
-  avatar.className =
-    "message-avatar";
-
-  avatar.textContent =
-    kind === "user"
-      ? "You"
-      : "B";
 
 
   const content =
@@ -544,11 +562,23 @@ function addMessage(
     "message-content";
 
 
-  const title =
-    document.createElement("strong");
+  /*
+    Only show the name for BradyAI.
+  */
 
-  title.textContent =
-    name;
+  if (kind === "assistant") {
+
+    const title =
+      document.createElement("strong");
+
+    title.textContent =
+      name;
+
+    content.appendChild(
+      title
+    );
+
+  }
 
 
   const body =
@@ -558,17 +588,14 @@ function addMessage(
     text;
 
 
-  content.append(
-    title,
+  content.appendChild(
     body
   );
 
 
-  card.append(
-    avatar,
-    content
-  );
-
+  /*
+    Sources
+  */
 
   if (sources.length) {
 
@@ -601,11 +628,11 @@ function addMessage(
           source.title ||
           source.url;
 
-        item.append(
+        item.appendChild(
           link
         );
 
-        list.append(
+        list.appendChild(
           item
         );
 
@@ -613,15 +640,25 @@ function addMessage(
     );
 
 
-    content.append(
+    content.appendChild(
       list
     );
 
   }
 
 
-  messages.append(
+  card.appendChild(
+    content
+  );
+
+
+  row.appendChild(
     card
+  );
+
+
+  messages.appendChild(
+    row
   );
 
 
@@ -629,7 +666,6 @@ function addMessage(
     messages.scrollHeight;
 
 }
-
 
 /* =========================================
    LOAD CONVERSATIONS
