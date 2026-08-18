@@ -290,190 +290,6 @@ h1 {
     font-weight: 700;
 }
 
-
-/* =========================================
-   MESSAGES
-========================================= */
-
-.messages {
-    overflow-y: auto;
-    padding: 28px 40px;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 20px;
-}
-
-
-/* =========================================
-   MESSAGE ROW
-========================================= */
-
-.message-row {
-    display: flex;
-    align-items: flex-start;
-
-    width: 100%;
-}
-
-
-/* =========================================
-   BRADYAI
-========================================= */
-
-.message-row.assistant {
-    justify-content: flex-start;
-}
-
-
-/* =========================================
-   USER
-========================================= */
-
-.message-row.user {
-    justify-content: flex-end;
-}
-
-
-/* =========================================
-   BRADYAI LOGO
-========================================= */
-
-.message-avatar {
-    width: 34px;
-    height: 34px;
-
-    min-width: 34px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #5c8fff;
-    color: white;
-
-    font-size: 14px;
-    font-weight: 800;
-
-    margin-right: 8px;
-}
-
-
-/* =========================================
-   BRADYAI NAME
-========================================= */
-
-.message-identity {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    margin-right: 10px;
-
-    flex-shrink: 0;
-}
-
-.message-identity strong {
-    white-space: nowrap;
-
-    font-size: 0.9rem;
-}
-
-
-/* =========================================
-   MESSAGE BUBBLE
-========================================= */
-
-.message {
-    width: max-content;
-    max-width: 70%;
-
-    flex: 0 1 auto;
-
-    padding: 10px 14px;
-
-    border-radius: 16px;
-
-    line-height: 1.45;
-
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-
-/* =========================================
-   BRADYAI BUBBLE
-========================================= */
-
-.message.assistant {
-    background: #1c2b52;
-
-    border-bottom-left-radius: 5px;
-}
-
-
-/* =========================================
-   USER BUBBLE
-========================================= */
-
-.message.user {
-    background: #315fbe;
-
-    border-bottom-right-radius: 5px;
-}
-
-
-/* =========================================
-   TEXT
-========================================= */
-
-.message p {
-    margin: 0;
-}
-
-
-/* =========================================
-   SOURCES
-========================================= */
-
-.sources {
-    margin: 10px 0 0;
-    padding-left: 18px;
-
-    font-size: 0.85rem;
-}
-
-.sources a {
-    color: #b9ceff;
-}
-
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media (max-width: 600px) {
-
-    .messages {
-        padding: 20px 14px;
-    }
-
-    .message {
-        max-width: 80%;
-    }
-
-    .message-avatar {
-        width: 30px;
-        height: 30px;
-        min-width: 30px;
-    }
-
-}
-
 /* =========================================
    COMPOSER
 ========================================= */
@@ -1407,4 +1223,204 @@ textarea:focus {
     font-weight: 700;
 
     color: #edf2ff;
+}
+
+/* =========================================
+   CLEAN CHAT MESSAGES
+========================================= */
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    overflow-y: auto;
+    padding: 28px 40px;
+}
+
+
+/* =========================================
+   MESSAGE ROW
+========================================= */
+
+.message-row {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+}
+
+
+/* BradyAI stays on the left */
+
+.message-row.assistant {
+    justify-content: flex-start;
+}
+
+
+/* User stays on the right */
+
+.message-row.user {
+    justify-content: flex-end;
+}
+
+
+/* =========================================
+   BRADYAI LOGO
+========================================= */
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+
+    min-width: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #5c8fff;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    margin: 0 8px 0 0;
+}
+
+
+/* =========================================
+   BRADYAI NAME
+========================================= */
+
+.message-name {
+    display: inline-block;
+
+    width: auto;
+    min-width: 0;
+
+    margin: 0 8px 0 0;
+    padding: 0;
+
+    color: #edf2ff;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   MESSAGE BUBBLE
+========================================= */
+
+.message {
+    display: block;
+
+    /* THIS IS THE IMPORTANT PART */
+    width: fit-content !important;
+    max-width: 70%;
+
+    /* Prevent the flexbox from stretching it */
+    flex: 0 1 auto;
+
+    margin: 0 !important;
+
+    padding: 10px 14px;
+
+    border-radius: 15px;
+
+    line-height: 1.45;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   BRADYAI BUBBLE
+========================================= */
+
+.message.assistant {
+    background: #1c2b52;
+
+    border-bottom-left-radius: 5px;
+}
+
+
+/* =========================================
+   USER BUBBLE
+========================================= */
+
+.message.user {
+    background: #315fbe;
+
+    border-bottom-right-radius: 5px;
+}
+
+
+/* =========================================
+   TEXT
+========================================= */
+
+.message p {
+    display: block;
+
+    width: auto;
+
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================
+   SOURCES
+========================================= */
+
+.message .sources {
+    width: auto;
+
+    margin: 10px 0 0;
+    padding-left: 18px;
+
+    font-size: 0.85rem;
+}
+
+.message .sources a {
+    color: #b9ceff;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .messages {
+        padding: 20px 14px;
+    }
+
+    .message {
+        max-width: 82%;
+    }
+
+    .message-avatar {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+    }
+
+    .message-name {
+        font-size: 0.85rem;
+    }
+
 }
