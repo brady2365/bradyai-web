@@ -1397,3 +1397,14 @@ textarea:focus {
     font-size: 14px;
     font-weight: 800;
 }
+
+.message-name {
+    margin-right: 10px;
+
+    white-space: nowrap;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    color: #edf2ff;
+}
