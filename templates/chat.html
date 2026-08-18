@@ -531,13 +531,14 @@ function addMessage(
      BRADYAI LOGO + NAME
   ========================================= */
 
-if (kind === "assistant") {
+  if (kind === "assistant") {
 
     const avatar =
       document.createElement("div");
 
     avatar.className =
       "message-avatar";
+
 
     const logo =
       document.createElement("img");
@@ -548,10 +549,10 @@ if (kind === "assistant") {
     logo.alt =
       "BradyAI";
 
+
     avatar.appendChild(
       logo
     );
-}
 
 
     const nameElement =
@@ -633,6 +634,7 @@ if (kind === "assistant") {
           source.title ||
           source.url;
 
+
         item.appendChild(
           link
         );
@@ -651,6 +653,10 @@ if (kind === "assistant") {
 
   }
 
+
+  /* =========================================
+     ADD MESSAGE TO ROW
+  ========================================= */
 
   row.appendChild(
     card
