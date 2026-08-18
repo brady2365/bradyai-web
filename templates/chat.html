@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="utf-8">
 
   <meta
@@ -43,15 +42,8 @@
   <header>
 
     <div>
-
-      <p class="eyebrow">
-        LOCAL AI ASSISTANT
-      </p>
-
-      <h1>
-        BradyAI
-      </h1>
-
+      <p class="eyebrow">LOCAL AI ASSISTANT</p>
+      <h1>BradyAI</h1>
     </div>
 
     <button
@@ -73,22 +65,7 @@
     id="messages"
     class="messages"
     aria-live="polite"
-  >
-
-    <article class="message assistant">
-
-      <strong>
-        BradyAI
-      </strong>
-
-      <p>
-        Hi! Ask me something, research a topic,
-        or tell me a note to remember.
-      </p>
-
-    </article>
-
-  </section>
+  ></section>
 
 
   <!-- =========================================
@@ -123,19 +100,10 @@
     </div>
 
     <p class="hint">
-
       Try:
-
-      <code>
-        research how do quantum computers work
-      </code>
-
+      <code>research how do quantum computers work</code>
       or
-
-      <code>
-        remember I am building a game
-      </code>
-
+      <code>remember I am building a game</code>
     </p>
 
   </form>
@@ -146,6 +114,26 @@
 <script>
 
 let conversationId = null;
+
+
+/* =========================================
+   DOM
+========================================= */
+
+const form =
+  document.getElementById("chat-form");
+
+const input =
+  document.getElementById("message");
+
+const messages =
+  document.getElementById("messages");
+
+const sendButton =
+  document.getElementById("send");
+
+const clearMemoryButton =
+  document.getElementById("clear-memory");
 
 
 /* =========================================
@@ -161,9 +149,22 @@ async function waitForClerk() {
       Clerk.load
     ) {
 
-      await Clerk.load();
+      try {
 
-      return true;
+        await Clerk.load();
+
+        return true;
+
+      } catch (error) {
+
+        console.error(
+          "Clerk load error:",
+          error
+        );
+
+        return false;
+
+      }
 
     }
 
@@ -174,7 +175,6 @@ async function waitForClerk() {
   }
 
   return false;
-
 }
 
 
@@ -184,7 +184,8 @@ async function waitForClerk() {
 
 async function checkAuthentication() {
 
-  const loaded = await waitForClerk();
+  const loaded =
+    await waitForClerk();
 
   if (!loaded) {
 
@@ -198,7 +199,8 @@ async function checkAuthentication() {
 
   if (!Clerk.isSignedIn) {
 
-    window.location.href = "/sign-in";
+    window.location.href =
+      "/sign-in";
 
     return false;
 
@@ -210,12 +212,11 @@ async function checkAuthentication() {
   );
 
   return true;
-
 }
 
 
 /* =========================================
-   API REQUEST HELPER
+   API REQUEST
 ========================================= */
 
 async function apiRequest(
@@ -223,38 +224,60 @@ async function apiRequest(
   options = {}
 ) {
 
+  if (
+    typeof Clerk === "undefined" ||
+    !Clerk.session
+  ) {
+
+    throw new Error(
+      "Clerk session is not available."
+    );
+
+  }
+
+
   const token =
     await Clerk.session.getToken();
 
 
-  const headers = {
+  if (!token) {
 
+    throw new Error(
+      "Could not get authentication token."
+    );
+
+  }
+
+
+  const headers = {
     "Content-Type":
       "application/json",
 
     "Authorization":
       `Bearer ${token}`
-
   };
 
 
-  const response = await fetch(
-    url,
-    {
-      ...options,
-      headers: {
-        ...headers,
-        ...(options.headers || {})
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+
+        headers: {
+          ...headers,
+          ...(options.headers || {})
+        }
       }
-    }
-  );
+    );
 
 
   let data = {};
 
   try {
 
-    data = await response.json();
+    data =
+      await response.json();
 
   } catch {
 
@@ -274,7 +297,6 @@ async function apiRequest(
 
 
   return data;
-
 }
 
 
@@ -327,6 +349,11 @@ function addMessage(
 
     sources.forEach(source => {
 
+      if (!source.url) {
+        return;
+      }
+
+
       const item =
         document.createElement("li");
 
@@ -338,14 +365,11 @@ function addMessage(
       link.href =
         source.url;
 
-
       link.target =
         "_blank";
 
-
       link.rel =
         "noreferrer";
-
 
       link.textContent =
         source.title ||
@@ -359,7 +383,9 @@ function addMessage(
     });
 
 
-    card.append(list);
+    if (list.children.length) {
+      card.append(list);
+    }
 
   }
 
@@ -368,7 +394,6 @@ function addMessage(
 
   messages.scrollTop =
     messages.scrollHeight;
-
 }
 
 
@@ -384,10 +409,29 @@ function clearMessages() {
 
 
 /* =========================================
+   WELCOME MESSAGE
+========================================= */
+
+function showWelcome() {
+
+  clearMessages();
+
+  addMessage(
+    "assistant",
+    "BradyAI",
+    "Hi! Ask me something, research a topic, or tell me a note to remember."
+  );
+
+}
+
+
+/* =========================================
    CREATE CONVERSATION
 ========================================= */
 
-async function createConversation() {
+async function createConversation(
+  title = "New Chat"
+) {
 
   const data =
     await apiRequest(
@@ -396,9 +440,8 @@ async function createConversation() {
         method: "POST",
 
         body: JSON.stringify({
-          title: "New Chat"
+          title: title
         })
-
       }
     );
 
@@ -412,6 +455,8 @@ async function createConversation() {
     conversationId
   );
 
+
+  return conversationId;
 }
 
 
@@ -424,6 +469,8 @@ async function loadConversation() {
   if (!conversationId) {
 
     await createConversation();
+
+    showWelcome();
 
     return;
 
@@ -444,44 +491,110 @@ async function loadConversation() {
     data.messages.length === 0
   ) {
 
-    addMessage(
-      "assistant",
-      "BradyAI",
-      "Hi! Ask me something, research a topic, or tell me a note to remember."
-    );
+    showWelcome();
 
     return;
 
   }
 
 
-  data.messages.forEach(message => {
+  data.messages.forEach(
+    message => {
 
-    const kind =
-      message.role === "user"
-        ? "user"
-        : "assistant";
-
-
-    const name =
-      message.role === "user"
-        ? "You"
-        : "BradyAI";
+      const kind =
+        message.role === "user"
+          ? "user"
+          : "assistant";
 
 
-    addMessage(
-      kind,
-      name,
-      message.content
-    );
+      const name =
+        message.role === "user"
+          ? "You"
+          : "BradyAI";
 
-  });
+
+      addMessage(
+        kind,
+        name,
+        message.content
+      );
+
+    }
+  );
 
 }
 
 
 /* =========================================
-   SEND CHAT MESSAGE
+   GET USER'S CONVERSATIONS
+========================================= */
+
+async function getConversations() {
+
+  const data =
+    await apiRequest(
+      "/api/conversations"
+    );
+
+
+  return data.conversations || [];
+
+}
+
+
+/* =========================================
+   LOAD OR CREATE CHAT
+========================================= */
+
+async function initializeConversation() {
+
+  const conversations =
+    await getConversations();
+
+
+  /*
+    If the user already has a conversation,
+    load the most recently updated one.
+  */
+
+  if (conversations.length > 0) {
+
+    conversationId =
+      conversations[0].id;
+
+
+    console.log(
+      "Loading existing conversation:",
+      conversationId
+    );
+
+
+    await loadConversation();
+
+    return;
+
+  }
+
+
+  /*
+    No conversations yet.
+    Create the first one.
+  */
+
+  console.log(
+    "No conversations found. Creating one..."
+  );
+
+
+  await createConversation();
+
+  showWelcome();
+
+}
+
+
+/* =========================================
+   SEND MESSAGE
 ========================================= */
 
 async function sendMessage(message) {
@@ -495,6 +608,10 @@ async function sendMessage(message) {
 
   try {
 
+    /*
+      Make sure a conversation exists.
+    */
+
     if (!conversationId) {
 
       await createConversation();
@@ -503,44 +620,28 @@ async function sendMessage(message) {
 
 
     /*
-      Save the user's message.
-    */
-
-    await apiRequest(
-      `/api/conversations/${conversationId}/messages`,
-      {
-        method: "POST",
-
-        body: JSON.stringify({
-          role: "user",
-          content: message
-        })
-
-      }
-    );
-
-
-    /*
       Ask BradyAI.
+
+      IMPORTANT:
+      The backend handles the AI response
+      and memory.
     */
 
     const response =
       await apiRequest(
-        "https://bradyai-web.onrender.com/api/chat",
+        "/api/chat",
         {
           method: "POST",
 
           body: JSON.stringify({
             message: message
           })
-
         }
       );
 
 
     const reply =
       response.reply ||
-      response.error ||
       "Something went wrong.";
 
 
@@ -557,7 +658,24 @@ async function sendMessage(message) {
 
 
     /*
-      Save AI response.
+      Save user message to conversation.
+    */
+
+    await apiRequest(
+      `/api/conversations/${conversationId}/messages`,
+      {
+        method: "POST",
+
+        body: JSON.stringify({
+          role: "user",
+          content: message
+        })
+      }
+    );
+
+
+    /*
+      Save BradyAI response to conversation.
     */
 
     await apiRequest(
@@ -569,7 +687,6 @@ async function sendMessage(message) {
           role: "assistant",
           content: reply
         })
-
       }
     );
 
@@ -606,32 +723,8 @@ async function sendMessage(message) {
 
 
 /* =========================================
-   FORM
+   FORM SUBMIT
 ========================================= */
-
-const form =
-  document.getElementById(
-    "chat-form"
-  );
-
-
-const input =
-  document.getElementById(
-    "message"
-  );
-
-
-const messages =
-  document.getElementById(
-    "messages"
-  );
-
-
-const sendButton =
-  document.getElementById(
-    "send"
-  );
-
 
 form.addEventListener(
   "submit",
@@ -645,11 +738,13 @@ form.addEventListener(
 
 
     if (!message) {
-
       return;
-
     }
 
+
+    /*
+      Display user message immediately.
+    */
 
     addMessage(
       "user",
@@ -673,29 +768,61 @@ form.addEventListener(
    CLEAR MEMORY
 ========================================= */
 
-document
-  .getElementById("clear-memory")
-  .addEventListener(
-    "click",
-    async () => {
+clearMemoryButton.addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      /*
+        Clear the BradyAI memory through
+        the normal chat API.
+      */
+
+      const response =
+        await apiRequest(
+          "/api/chat",
+          {
+            method: "POST",
+
+            body: JSON.stringify({
+              message: "clear memory"
+            })
+          }
+        );
+
 
       addMessage(
-        "user",
-        "You",
-        "clear memory"
+        "assistant",
+        "BradyAI",
+        response.reply ||
+        "Memory cleared."
       );
 
 
-      await sendMessage(
-        "clear memory"
+    } catch (error) {
+
+      console.error(
+        "CLEAR MEMORY ERROR:",
+        error
+      );
+
+
+      addMessage(
+        "assistant",
+        "BradyAI",
+        error.message ||
+        "Could not clear memory."
       );
 
     }
-  );
+
+  }
+);
 
 
 /* =========================================
-   START
+   START CHAT
 ========================================= */
 
 async function initializeChat() {
@@ -705,26 +832,29 @@ async function initializeChat() {
 
 
   if (!authenticated) {
-
     return;
-
   }
 
 
   try {
 
-    /*
-      For now, create a new conversation
-      when the page is opened.
-    */
-
-    await createConversation();
+    await initializeConversation();
 
   } catch (error) {
 
     console.error(
       "Conversation initialization error:",
       error
+    );
+
+
+    clearMessages();
+
+
+    addMessage(
+      "assistant",
+      "BradyAI",
+      "I couldn't load your conversations. Check the server logs."
     );
 
   }
