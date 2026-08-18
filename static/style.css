@@ -1342,3 +1342,47 @@ textarea:focus {
         max-width: 100%;
     }
 }
+
+/* =========================================
+   BRADYAI IDENTITY
+========================================= */
+
+.message-identity {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-right: 10px;
+
+    flex-shrink: 0;
+}
+
+.message-identity strong {
+    color: #edf2ff;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   AVATAR
+========================================= */
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #5c8fff;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 800;
+}
