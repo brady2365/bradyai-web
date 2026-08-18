@@ -871,20 +871,26 @@ def chat():
     if not user_id:
         return jsonify({
             "error": "You must be signed in to use BradyAI."
-        }), 401    
-    
+        }), 401
+
     data = request.get_json(silent=True) or {}
     message = str(data.get("message", "")).strip()
 
     if not message:
-        return jsonify({"error": "Enter a message first."}), 400
+        return jsonify({
+            "error": "Enter a message first."
+        }), 400
+
+    # =========================================
+    # CLEAR MEMORY
+    # =========================================
 
     if message.lower() == "clear memory":
 
         if PUBLIC_MODE:
             return jsonify({
                 "reply": "Personal memory is disabled on this public demo.",
-                "sources": [],
+                "sources": []
             })
 
         save_user_memory(
@@ -896,25 +902,64 @@ def chat():
             "reply": "Memory cleared.",
             "sources": []
         })
-        session_memory.clear()
-        save_user_memory(user_id, session_memory)
-        return jsonify({"reply": "Memory cleared.", "sources": []})
 
-if needs_research(message):
+    # =========================================
+    # RESEARCH
+    # =========================================
 
-    result = research(
-        clean_research_query(message)
+    if needs_research(message):
+
+        result = research(
+            clean_research_query(message)
+        )
+
+        reply = build_research_answer(result)
+        sources = result.get("sources", [])
+
+        # Save user message
+        save_chat_message(
+            user_id,
+            "user",
+            message
+        )
+
+        # Save BradyAI response
+        save_chat_message(
+            user_id,
+            "assistant",
+            reply
+        )
+
+        return jsonify({
+            "reply": reply,
+            "sources": sources
+        })
+
+    # =========================================
+    # MEMORY / AI
+    # =========================================
+
+    saved_reply = memory_reply(
+        message,
+        user_id
     )
 
-    reply = build_research_answer(result)
-    sources = result.get("sources", [])
+    reply = (
+        saved_reply
+        if saved_reply is not None
+        else generate(message)
+    )
 
+    reply = reply or "I do not know how to respond to that yet."
+
+    # Save user message
     save_chat_message(
         user_id,
         "user",
         message
     )
 
+    # Save BradyAI response
     save_chat_message(
         user_id,
         "assistant",
@@ -923,37 +968,8 @@ if needs_research(message):
 
     return jsonify({
         "reply": reply,
-        "sources": sources
+        "sources": []
     })
-
-saved_reply = memory_reply(
-    message,
-    user_id
-)
-
-reply = saved_reply if saved_reply is not None else generate(message)
-
-reply = reply or "I do not know how to respond to that yet."
-
-# Save user's message
-save_chat_message(
-    user_id,
-    "user",
-    message
-)
-
-# Save BradyAI's response
-save_chat_message(
-    user_id,
-    "assistant",
-    reply
-)
-
-return jsonify({
-    "reply": reply,
-    "sources": []
-})
-
 @app.post("/api/conversations/<int:conversation_id>/messages")
 def add_conversation_message(conversation_id):
 
