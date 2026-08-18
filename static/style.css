@@ -543,6 +543,8 @@ body {
 
     font-size: 14px;
     font-weight: 800;
+
+    transform: translateX(-7px);
 }
 
 .message-name {
