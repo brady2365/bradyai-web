@@ -292,115 +292,55 @@ h1 {
 
 
 /* =========================================
-   MESSAGES
+   MESSAGE ROWS
 ========================================= */
 
-.messages {
-    overflow-y: auto;
-    padding: 30px 6%;
-
+.message-row {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
 }
 
 
 /* =========================================
-   MESSAGE BUBBLES
+   BRADYAI AVATAR
+========================================= */
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #5c8fff;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    margin-top: 2px;
+}
+
+
+/* =========================================
+   MESSAGE BUBBLE
 ========================================= */
 
 .message {
     width: fit-content;
-    max-width: min(75%, 700px);
+    max-width: min(700px, 75%);
 
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    padding: 11px 15px;
+
+    border-radius: 16px;
 
     line-height: 1.5;
-}
-
-
-/* USER MESSAGE */
-
-.message.user {
-    margin-left: auto;
-
-    flex-direction: row-reverse;
-
-    padding: 11px 15px;
-
-    background: #315fbe;
-
-    border-radius: 18px;
-    border-bottom-right-radius: 5px;
-
-    color: white;
-}
-
-
-/* ASSISTANT MESSAGE */
-
-.message.assistant {
-    margin-right: auto;
-
-    padding: 11px 15px;
-
-    background: #1c2b52;
-
-    border-radius: 18px;
-    border-bottom-left-radius: 5px;
-}
-
-
-/* =========================================
-   AVATARS
-========================================= */
-
-.message-avatar {
-    width: 30px;
-    height: 30px;
-
-    flex-shrink: 0;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 50%;
-
-    background: #26375f;
-
-    font-size: 10px;
-    font-weight: 800;
-}
-
-
-/* Don't show the avatar inside the bubble */
-
-.message.user .message-avatar {
-    background: #4f7edc;
-}
-
-
-/* =========================================
-   MESSAGE CONTENT
-========================================= */
-
-.message-content {
-    min-width: 0;
-}
-
-.message-content strong {
-    display: block;
-
-    margin-bottom: 3px;
-
-    font-size: 12px;
-    opacity: .75;
-}
-
-.message-content p {
-    margin: 0;
 
     white-space: pre-wrap;
 
@@ -409,14 +349,56 @@ h1 {
 
 
 /* =========================================
+   BRADYAI MESSAGE
+========================================= */
+
+.message-row.assistant {
+    justify-content: flex-start;
+}
+
+.message.assistant {
+    background: #1c2b52;
+    border-bottom-left-radius: 5px;
+}
+
+
+/* =========================================
+   USER MESSAGE
+========================================= */
+
+.message-row.user {
+    justify-content: flex-end;
+}
+
+.message.user {
+    background: #315fbe;
+    border-bottom-right-radius: 5px;
+}
+
+
+/* =========================================
+   MESSAGE TEXT
+========================================= */
+
+.message p {
+    margin: 0;
+}
+
+.message strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+}
+
+
+/* =========================================
    SOURCES
 ========================================= */
 
 .sources {
-    margin: 10px 0 0;
+    margin: 12px 0 0;
     padding-left: 18px;
-
-    font-size: 12px;
+    font-size: 0.85rem;
 }
 
 .sources a {
@@ -425,17 +407,33 @@ h1 {
 
 
 /* =========================================
+   DESKTOP MESSAGE WIDTH
+========================================= */
+
+@media (min-width: 601px) {
+
+    .messages {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+}
+
+
+/* =========================================
    MOBILE
 ========================================= */
 
-@media (max-width: 700px) {
-
-    .messages {
-        padding: 20px 12px;
-    }
+@media (max-width: 600px) {
 
     .message {
-        max-width: 88%;
+        max-width: 85%;
+    }
+
+    .message-avatar {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
     }
 
 }
