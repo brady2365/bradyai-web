@@ -834,25 +834,10 @@ def chat():
         )
 
         reply = build_research_answer(result)
-        sources = result.get("sources", [])
-
-        # Save user message
-        save_chat_message(
-            user_id,
-            "user",
-            message
-        )
-
-        # Save BradyAI response
-        save_chat_message(
-            user_id,
-            "assistant",
-            reply
-        )
 
         return jsonify({
             "reply": reply,
-            "sources": sources
+            "sources": result.get("sources", [])
         })
 
     # =========================================
@@ -864,27 +849,17 @@ def chat():
         user_id
     )
 
-    reply = (
-        saved_reply
-        if saved_reply is not None
-        else generate(message)
-    )
+    if saved_reply is not None:
+        reply = saved_reply
+
+    else:
+        reply = generate(message)
 
     reply = reply or "I do not know how to respond to that yet."
 
-    # Save user message
-    save_chat_message(
-        user_id,
-        "user",
-        message
-    )
-
-    # Save BradyAI response
-    save_chat_message(
-        user_id,
-        "assistant",
-        reply
-    )
+    # =========================================
+    # RETURN RESPONSE
+    # =========================================
 
     return jsonify({
         "reply": reply,
