@@ -479,9 +479,13 @@ code {
     h1 {
         font-size: 1.35rem;
     }
-
     .messages {
-        padding: 18px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        overflow-y: auto;
+        padding: 28px 40px;
     }
 
     .message {
