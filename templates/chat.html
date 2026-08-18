@@ -525,18 +525,11 @@ function addMessage(
     `message-row ${kind}`;
 
 
-  /*
-    BradyAI avatar + name
-  */
+  /* =========================================
+     BRADYAI LOGO + NAME
+  ========================================= */
 
   if (kind === "assistant") {
-
-    const identity =
-      document.createElement("div");
-
-    identity.className =
-      "message-identity";
-
 
     const avatar =
       document.createElement("div");
@@ -547,30 +540,30 @@ function addMessage(
     avatar.textContent =
       "B";
 
+    row.appendChild(
+      avatar
+    );
+
 
     const nameElement =
       document.createElement("strong");
 
+    nameElement.className =
+      "message-name";
+
     nameElement.textContent =
       name;
 
-
-    identity.append(
-      avatar,
-      nameElement
-    );
-
-
     row.appendChild(
-      identity
+      nameElement
     );
 
   }
 
 
-  /*
-    Message bubble
-  */
+  /* =========================================
+     MESSAGE BUBBLE
+  ========================================= */
 
   const card =
     document.createElement("article");
@@ -591,9 +584,9 @@ function addMessage(
   );
 
 
-  /*
-    Sources
-  */
+  /* =========================================
+     SOURCES
+  ========================================= */
 
   if (sources.length) {
 
