@@ -750,6 +750,64 @@ def get_conversation(conversation_id):
         "messages": messages
     })
 
+@app.patch("/api/conversations/<int:conversation_id>")
+def update_conversation(conversation_id):
+
+    user_id = get_authenticated_user()
+
+    if not user_id:
+        return jsonify({
+            "error": "You must be signed in."
+        }), 401
+
+    data = request.get_json(silent=True) or {}
+
+    title = str(
+        data.get("title", "")
+    ).strip()
+
+    if not title:
+        return jsonify({
+            "error": "Conversation title cannot be empty."
+        }), 400
+
+    title = title[:100]
+
+    connection = get_db_connection()
+
+    try:
+
+        with connection.cursor() as cursor:
+
+            cursor.execute("""
+                UPDATE conversations
+                SET title = %s,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+                  AND user_id = %s
+            """, (
+                title,
+                conversation_id,
+                user_id
+            ))
+
+            if cursor.rowcount == 0:
+
+                connection.rollback()
+
+                return jsonify({
+                    "error": "Conversation not found."
+                }), 404
+
+        connection.commit()
+
+    finally:
+        connection.close()
+
+    return jsonify({
+        "success": True,
+        "title": title
+    })
 
 @app.delete("/api/conversations/<int:conversation_id>")
 def delete_conversation_api(conversation_id):
