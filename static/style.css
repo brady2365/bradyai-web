@@ -433,13 +433,15 @@ body {
 ========================================= */
 
 .message-row {
-    width: 100%;
+    width: min(850px, 100%);
 
     display: flex;
     align-items: center;
 
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
+
+    gap: 0;
 }
 
 .message-row.assistant {
@@ -449,7 +451,6 @@ body {
 .message-row.user {
     justify-content: flex-end;
 }
-
 
 /* =========================================
    MESSAGE BUBBLE
@@ -793,8 +794,15 @@ textarea:focus {
         display: none;
     }
 
-    .messages {
-        padding: 20px 14px;
+   .messages {
+        min-height: 0;
+
+        overflow-y: auto;
+
+        padding: 28px 40px;
+    
+        display: flex;
+        flex-direction: column;
 
         gap: 5px;
     }
