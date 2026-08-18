@@ -540,10 +540,6 @@ function addMessage(
     avatar.textContent =
       "B";
 
-    row.appendChild(
-      avatar
-    );
-
 
     const nameElement =
       document.createElement("strong");
@@ -553,6 +549,11 @@ function addMessage(
 
     nameElement.textContent =
       name;
+
+
+    row.appendChild(
+      avatar
+    );
 
     row.appendChild(
       nameElement
@@ -652,7 +653,6 @@ function addMessage(
     messages.scrollHeight;
 
 }
-
 /* =========================================
    LOAD CONVERSATIONS
 ========================================= */
