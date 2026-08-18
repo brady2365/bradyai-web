@@ -17,18 +17,13 @@ body {
 }
 
 body {
-    background: radial-gradient(
-        circle at top,
-        #18234a,
-        #0b1020 55%
-    );
-
     overflow: hidden;
+    background: #0b1020;
 }
 
 
 /* =========================================
-   APP LAYOUT
+   APP
 ========================================= */
 
 .app-layout {
@@ -54,19 +49,14 @@ body {
     display: flex;
     flex-direction: column;
 
+    padding: 18px 14px;
+
     background: #0d1429;
 
     border-right: 1px solid #2a375c;
 
-    padding: 18px 14px;
-
     z-index: 100;
 }
-
-
-/* =========================================
-   SIDEBAR HEADER
-========================================= */
 
 .sidebar-header {
     display: flex;
@@ -90,15 +80,13 @@ body {
     display: grid;
     place-items: center;
 
-    flex-shrink: 0;
-
     border-radius: 10px;
 
     background: #5c8fff;
     color: white;
 
-    font-weight: 800;
     font-size: 18px;
+    font-weight: 800;
 }
 
 .brand strong {
@@ -143,15 +131,10 @@ body {
     font-weight: 700;
 
     cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        border-color 0.15s ease;
 }
 
 .new-chat-button:hover {
     background: #203157;
-    border-color: #5874ac;
 }
 
 
@@ -177,7 +160,7 @@ body {
 
     text-transform: uppercase;
 
-    letter-spacing: 0.08em;
+    letter-spacing: .08em;
 }
 
 .conversation-list {
@@ -198,9 +181,6 @@ body {
     align-items: center;
 
     border-radius: 9px;
-
-    transition:
-        background 0.15s ease;
 }
 
 .conversation-item:hover {
@@ -255,17 +235,12 @@ body {
     width: 32px;
     height: 32px;
 
-    flex-shrink: 0;
-
     margin-right: 4px;
-
-    padding: 0;
 
     border: 0;
     border-radius: 7px;
 
     background: transparent;
-
     color: #7180a2;
 
     cursor: pointer;
@@ -310,7 +285,6 @@ body {
     border-radius: 9px;
 
     background: transparent;
-
     color: #aebbd8;
 
     font: inherit;
@@ -318,10 +292,6 @@ body {
     text-align: left;
 
     cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
 }
 
 .sidebar-button:hover {
@@ -350,7 +320,7 @@ body {
 
 
 /* =========================================
-   CHAT HEADER
+   HEADER
 ========================================= */
 
 .chat-header {
@@ -384,13 +354,8 @@ body {
     font-size: 10px;
     font-weight: 700;
 
-    letter-spacing: 0.14em;
+    letter-spacing: .14em;
 }
-
-
-/* =========================================
-   ICON BUTTON
-========================================= */
 
 .icon-button {
     width: 40px;
@@ -399,39 +364,28 @@ body {
     display: grid;
     place-items: center;
 
-    padding: 0;
-
     border: 0;
     border-radius: 9px;
 
     background: transparent;
-
     color: #dce5ff;
 
     font-size: 21px;
 
     cursor: pointer;
-
-    transition:
-        background 0.15s ease;
 }
 
 .icon-button:hover {
     background: #182646;
 }
 
-.mobile-only {
-    display: none;
-}
-
 #open-sidebar {
     display: none;
 }
 
-
-/* =========================================
-   QUIET BUTTON
-========================================= */
+.mobile-only {
+    display: none;
+}
 
 .quiet-button {
     padding: 9px 12px;
@@ -440,7 +394,6 @@ body {
     border-radius: 9px;
 
     background: #26375f;
-
     color: white;
 
     font: inherit;
@@ -449,13 +402,6 @@ body {
     font-weight: 700;
 
     cursor: pointer;
-
-    transition:
-        background 0.15s ease;
-}
-
-.quiet-button:hover {
-    background: #314574;
 }
 
 
@@ -463,17 +409,22 @@ body {
    MESSAGES
 ========================================= */
 
+/*
+   IMPORTANT:
+   Messages are kept close together.
+*/
+
 .messages {
     min-height: 0;
 
     overflow-y: auto;
 
+    padding: 28px 40px;
+
     display: flex;
     flex-direction: column;
 
-    gap: 6px;
-
-    padding: 28px 40px;
+    gap: 5px;
 }
 
 
@@ -489,8 +440,6 @@ body {
 
     margin: 0;
     padding: 0;
-
-    gap: 0;
 }
 
 .message-row.assistant {
@@ -507,13 +456,11 @@ body {
 ========================================= */
 
 .message {
-    display: block;
-
     width: fit-content !important;
 
     max-width: 70%;
 
-    flex: 0 1 auto;
+    flex: 0 0 auto;
 
     margin: 0 !important;
 
@@ -526,8 +473,6 @@ body {
     white-space: pre-wrap;
 
     overflow-wrap: anywhere;
-
-    box-sizing: border-box;
 }
 
 
@@ -558,8 +503,6 @@ body {
 ========================================= */
 
 .message p {
-    display: block;
-
     width: auto;
 
     margin: 0;
@@ -575,9 +518,9 @@ body {
     display: flex;
     align-items: center;
 
-    gap: 0;
+    gap: 7px;
 
-    margin: 0 6px 0 0;
+    margin-right: 7px;
 
     flex-shrink: 0;
 }
@@ -592,12 +535,9 @@ body {
     align-items: center;
     justify-content: center;
 
-    margin: 0 6px 0 0;
-
     border-radius: 50%;
 
     background: #5c8fff;
-
     color: white;
 
     font-size: 14px;
@@ -605,14 +545,7 @@ body {
 }
 
 .message-name {
-    display: inline-block;
-
-    width: auto;
-
-    min-width: 0;
-
-    margin: 0 4px 0 0;
-    padding: 0;
+    margin: 0 7px 0 0;
 
     color: #edf2ff;
 
@@ -620,6 +553,17 @@ body {
     font-weight: 700;
 
     white-space: nowrap;
+}
+
+
+/*
+   If your HTML puts the BradyAI logo/name
+   immediately before the bubble, this keeps
+   everything tightly grouped.
+*/
+
+.message-row.assistant {
+    gap: 0;
 }
 
 
@@ -692,8 +636,6 @@ body {
     padding: 16px 8% 20px;
 
     border-top: 1px solid #2a375c;
-
-    background: rgba(13, 20, 41, 0.96);
 }
 
 .composer-row {
@@ -722,7 +664,6 @@ textarea {
     border-radius: 12px;
 
     background: #0b142c;
-
     color: inherit;
 
     font: inherit;
@@ -741,30 +682,16 @@ textarea:focus {
     border-radius: 10px;
 
     background: #5c8fff;
-
     color: white;
 
     font: inherit;
-
     font-weight: 700;
 
     cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        transform 0.1s ease;
-}
-
-#send:hover {
-    background: #709cff;
-}
-
-#send:active {
-    transform: scale(0.98);
 }
 
 #send:disabled {
-    opacity: 0.65;
+    opacity: .65;
 
     cursor: wait;
 }
@@ -783,7 +710,7 @@ textarea:focus {
 
 
 /* =========================================
-   SIDEBAR OVERLAY
+   MOBILE OVERLAY
 ========================================= */
 
 .sidebar-overlay {
@@ -816,7 +743,7 @@ textarea:focus {
 
         transform: translateX(-100%);
 
-        transition: transform 0.25s ease;
+        transition: transform .25s ease;
 
         box-shadow: 20px 0 50px #0008;
     }
@@ -832,15 +759,14 @@ textarea:focus {
 
         display: block;
 
-        background: rgba(0, 0, 0, 0.55);
+        background: rgba(0, 0, 0, .55);
 
         opacity: 0;
-
         visibility: hidden;
 
         transition:
-            opacity 0.25s ease,
-            visibility 0.25s ease;
+            opacity .25s ease,
+            visibility .25s ease;
 
         z-index: 90;
     }
@@ -868,9 +794,9 @@ textarea:focus {
     }
 
     .messages {
-        gap: 6px;
-
         padding: 20px 14px;
+
+        gap: 5px;
     }
 
     .message {
@@ -882,16 +808,10 @@ textarea:focus {
         height: 30px;
 
         min-width: 30px;
-
-        font-size: 13px;
-
-        margin-right: 5px;
     }
 
     .message-name {
-        font-size: 0.85rem;
-
-        margin-right: 4px;
+        font-size: .85rem;
     }
 
     .composer {
