@@ -526,11 +526,17 @@ function addMessage(
 
 
   /*
-    BradyAI gets an avatar outside
-    of the message bubble.
+    BradyAI avatar + name
   */
 
   if (kind === "assistant") {
+
+    const identity =
+      document.createElement("div");
+
+    identity.className =
+      "message-identity";
+
 
     const avatar =
       document.createElement("div");
@@ -541,44 +547,36 @@ function addMessage(
     avatar.textContent =
       "B";
 
+
+    const nameElement =
+      document.createElement("strong");
+
+    nameElement.textContent =
+      name;
+
+
+    identity.append(
+      avatar,
+      nameElement
+    );
+
+
     row.appendChild(
-      avatar
+      identity
     );
 
   }
 
+
+  /*
+    Message bubble
+  */
 
   const card =
     document.createElement("article");
 
   card.className =
     `message ${kind}`;
-
-
-  const content =
-    document.createElement("div");
-
-  content.className =
-    "message-content";
-
-
-  /*
-    Only show the name for BradyAI.
-  */
-
-  if (kind === "assistant") {
-
-    const title =
-      document.createElement("strong");
-
-    title.textContent =
-      name;
-
-    content.appendChild(
-      title
-    );
-
-  }
 
 
   const body =
@@ -588,7 +586,7 @@ function addMessage(
     text;
 
 
-  content.appendChild(
+  card.appendChild(
     body
   );
 
@@ -640,16 +638,11 @@ function addMessage(
     );
 
 
-    content.appendChild(
+    card.appendChild(
       list
     );
 
   }
-
-
-  card.appendChild(
-    content
-  );
 
 
   row.appendChild(
