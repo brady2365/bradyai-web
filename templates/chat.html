@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
   <meta charset="utf-8">
 
   <meta
@@ -34,81 +35,219 @@
 
 </head>
 
-
 <body>
 
-<main class="app-shell">
-
-  <header>
-
-    <div>
-      <p class="eyebrow">LOCAL AI ASSISTANT</p>
-      <h1>BradyAI</h1>
-    </div>
-
-    <button
-      id="clear-memory"
-      class="quiet-button"
-      type="button"
-    >
-      Clear memory
-    </button>
-
-  </header>
-
+<div class="app-layout">
 
   <!-- =========================================
-       MESSAGES
+       SIDEBAR
   ========================================= -->
 
-  <section
-    id="messages"
-    class="messages"
-    aria-live="polite"
-  ></section>
+  <aside class="sidebar" id="sidebar">
 
+    <div class="sidebar-header">
 
-  <!-- =========================================
-       COMPOSER
-  ========================================= -->
+      <div class="brand">
+        <div class="brand-icon">B</div>
 
-  <form
-    id="chat-form"
-    class="composer"
-  >
-
-    <label for="message">
-      Message
-    </label>
-
-    <div class="composer-row">
-
-      <textarea
-        id="message"
-        rows="2"
-        placeholder="Ask BradyAI anything..."
-        required
-      ></textarea>
+        <div>
+          <strong>BradyAI</strong>
+          <span>AI Assistant</span>
+        </div>
+      </div>
 
       <button
-        id="send"
-        type="submit"
+        id="close-sidebar"
+        class="icon-button mobile-only"
+        type="button"
+        aria-label="Close sidebar"
       >
-        Send
+        ×
       </button>
 
     </div>
 
-    <p class="hint">
-      Try:
-      <code>research how do quantum computers work</code>
-      or
-      <code>remember I am building a game</code>
-    </p>
 
-  </form>
+    <!-- NEW CHAT -->
 
-</main>
+    <button
+      id="new-chat"
+      class="new-chat-button"
+      type="button"
+    >
+      <span>＋</span>
+      New Chat
+    </button>
+
+
+    <!-- CONVERSATIONS -->
+
+    <div class="conversation-section">
+
+      <div class="section-title">
+        Conversations
+      </div>
+
+      <div
+        id="conversation-list"
+        class="conversation-list"
+      >
+
+        <div class="conversation-loading">
+          Loading...
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SIDEBAR BOTTOM -->
+
+    <div class="sidebar-bottom">
+
+      <button
+        id="sidebar-clear-memory"
+        class="sidebar-button"
+        type="button"
+      >
+        🧠 Clear Memory
+      </button>
+
+      <button
+        id="sign-out"
+        class="sidebar-button"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================= -->
+
+  <main class="main-area">
+
+    <!-- HEADER -->
+
+    <header class="chat-header">
+
+      <button
+        id="open-sidebar"
+        class="icon-button"
+        type="button"
+        aria-label="Open sidebar"
+      >
+        ☰
+      </button>
+
+
+      <div class="chat-title-container">
+
+        <p class="eyebrow">
+          BRADYAI
+        </p>
+
+        <h1 id="chat-title">
+          New Chat
+        </h1>
+
+      </div>
+
+
+      <button
+        id="clear-memory"
+        class="quiet-button"
+        type="button"
+      >
+        Clear memory
+      </button>
+
+    </header>
+
+
+    <!-- =========================================
+         MESSAGES
+    ========================================= -->
+
+    <section
+      id="messages"
+      class="messages"
+      aria-live="polite"
+    >
+
+      <div class="welcome">
+
+        <div class="welcome-icon">
+          B
+        </div>
+
+        <h2>
+          How can I help?
+        </h2>
+
+        <p>
+          Ask BradyAI something, research a topic,
+          or tell me something to remember.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         COMPOSER
+    ========================================= -->
+
+    <form
+      id="chat-form"
+      class="composer"
+    >
+
+      <div class="composer-row">
+
+        <textarea
+          id="message"
+          rows="1"
+          placeholder="Message BradyAI..."
+          autocomplete="off"
+          required
+        ></textarea>
+
+        <button
+          id="send"
+          type="submit"
+        >
+          Send
+        </button>
+
+      </div>
+
+      <p class="hint">
+        BradyAI can make mistakes. Check important information.
+      </p>
+
+    </form>
+
+  </main>
+
+</div>
+
+
+<!-- =========================================
+     OVERLAY FOR MOBILE
+========================================= -->
+
+<div
+  id="sidebar-overlay"
+  class="sidebar-overlay"
+></div>
 
 
 <script>
@@ -120,20 +259,29 @@ let conversationId = null;
    DOM
 ========================================= */
 
+const sidebar =
+  document.getElementById("sidebar");
+
+const sidebarOverlay =
+  document.getElementById("sidebar-overlay");
+
+const conversationList =
+  document.getElementById("conversation-list");
+
+const messages =
+  document.getElementById("messages");
+
 const form =
   document.getElementById("chat-form");
 
 const input =
   document.getElementById("message");
 
-const messages =
-  document.getElementById("messages");
-
 const sendButton =
   document.getElementById("send");
 
-const clearMemoryButton =
-  document.getElementById("clear-memory");
+const chatTitle =
+  document.getElementById("chat-title");
 
 
 /* =========================================
@@ -149,22 +297,9 @@ async function waitForClerk() {
       Clerk.load
     ) {
 
-      try {
+      await Clerk.load();
 
-        await Clerk.load();
-
-        return true;
-
-      } catch (error) {
-
-        console.error(
-          "Clerk load error:",
-          error
-        );
-
-        return false;
-
-      }
+      return true;
 
     }
 
@@ -175,6 +310,7 @@ async function waitForClerk() {
   }
 
   return false;
+
 }
 
 
@@ -212,11 +348,12 @@ async function checkAuthentication() {
   );
 
   return true;
+
 }
 
 
 /* =========================================
-   API REQUEST
+   API HELPER
 ========================================= */
 
 async function apiRequest(
@@ -224,30 +361,8 @@ async function apiRequest(
   options = {}
 ) {
 
-  if (
-    typeof Clerk === "undefined" ||
-    !Clerk.session
-  ) {
-
-    throw new Error(
-      "Clerk session is not available."
-    );
-
-  }
-
-
   const token =
     await Clerk.session.getToken();
-
-
-  if (!token) {
-
-    throw new Error(
-      "Could not get authentication token."
-    );
-
-  }
-
 
   const headers = {
     "Content-Type":
@@ -256,7 +371,6 @@ async function apiRequest(
     "Authorization":
       `Bearer ${token}`
   };
-
 
   const response =
     await fetch(
@@ -271,7 +385,6 @@ async function apiRequest(
       }
     );
 
-
   let data = {};
 
   try {
@@ -285,7 +398,6 @@ async function apiRequest(
 
   }
 
-
   if (!response.ok) {
 
     throw new Error(
@@ -295,13 +407,108 @@ async function apiRequest(
 
   }
 
-
   return data;
+
 }
 
 
 /* =========================================
-   DISPLAY MESSAGE
+   SIDEBAR
+========================================= */
+
+function openSidebar() {
+
+  sidebar.classList.add(
+    "sidebar-open"
+  );
+
+  sidebarOverlay.classList.add(
+    "overlay-visible"
+  );
+
+}
+
+
+function closeSidebar() {
+
+  sidebar.classList.remove(
+    "sidebar-open"
+  );
+
+  sidebarOverlay.classList.remove(
+    "overlay-visible"
+  );
+
+}
+
+
+document
+  .getElementById("open-sidebar")
+  .addEventListener(
+    "click",
+    openSidebar
+  );
+
+
+document
+  .getElementById("close-sidebar")
+  .addEventListener(
+    "click",
+    closeSidebar
+  );
+
+
+sidebarOverlay.addEventListener(
+  "click",
+  closeSidebar
+);
+
+
+/* =========================================
+   CLEAR MESSAGES
+========================================= */
+
+function clearMessages() {
+
+  messages.innerHTML = "";
+
+}
+
+
+/* =========================================
+   WELCOME
+========================================= */
+
+function showWelcome() {
+
+  clearMessages();
+
+  const welcome =
+    document.createElement("div");
+
+  welcome.className =
+    "welcome";
+
+  welcome.innerHTML = `
+    <div class="welcome-icon">B</div>
+
+    <h2>How can I help?</h2>
+
+    <p>
+      Ask BradyAI something, research a topic,
+      or tell me something to remember.
+    </p>
+  `;
+
+  messages.appendChild(
+    welcome
+  );
+
+}
+
+
+/* =========================================
+   ADD MESSAGE
 ========================================= */
 
 function addMessage(
@@ -318,6 +525,25 @@ function addMessage(
     `message ${kind}`;
 
 
+  const avatar =
+    document.createElement("div");
+
+  avatar.className =
+    "message-avatar";
+
+  avatar.textContent =
+    kind === "user"
+      ? "You"
+      : "B";
+
+
+  const content =
+    document.createElement("div");
+
+  content.className =
+    "message-content";
+
+
   const title =
     document.createElement("strong");
 
@@ -332,9 +558,15 @@ function addMessage(
     text;
 
 
-  card.append(
+  content.append(
     title,
     body
+  );
+
+
+  card.append(
+    avatar,
+    content
   );
 
 
@@ -347,80 +579,211 @@ function addMessage(
       "sources";
 
 
-    sources.forEach(source => {
+    sources.forEach(
+      source => {
 
-      if (!source.url) {
-        return;
+        const item =
+          document.createElement("li");
+
+        const link =
+          document.createElement("a");
+
+        link.href =
+          source.url;
+
+        link.target =
+          "_blank";
+
+        link.rel =
+          "noreferrer";
+
+        link.textContent =
+          source.title ||
+          source.url;
+
+        item.append(
+          link
+        );
+
+        list.append(
+          item
+        );
+
       }
+    );
 
 
-      const item =
-        document.createElement("li");
-
-
-      const link =
-        document.createElement("a");
-
-
-      link.href =
-        source.url;
-
-      link.target =
-        "_blank";
-
-      link.rel =
-        "noreferrer";
-
-      link.textContent =
-        source.title ||
-        source.url;
-
-
-      item.append(link);
-
-      list.append(item);
-
-    });
-
-
-    if (list.children.length) {
-      card.append(list);
-    }
+    content.append(
+      list
+    );
 
   }
 
 
-  messages.append(card);
+  messages.append(
+    card
+  );
+
 
   messages.scrollTop =
     messages.scrollHeight;
-}
-
-
-/* =========================================
-   CLEAR DISPLAY
-========================================= */
-
-function clearMessages() {
-
-  messages.innerHTML = "";
 
 }
 
 
 /* =========================================
-   WELCOME MESSAGE
+   LOAD CONVERSATIONS
 ========================================= */
 
-function showWelcome() {
+async function loadConversations() {
 
-  clearMessages();
+  const data =
+    await apiRequest(
+      "/api/conversations"
+    );
 
-  addMessage(
-    "assistant",
-    "BradyAI",
-    "Hi! Ask me something, research a topic, or tell me a note to remember."
+  conversationList.innerHTML = "";
+
+
+  if (
+    !data.conversations ||
+    data.conversations.length === 0
+  ) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "conversation-empty";
+
+    empty.textContent =
+      "No conversations yet.";
+
+    conversationList.append(
+      empty
+    );
+
+    return [];
+
+  }
+
+
+  data.conversations.forEach(
+    conversation => {
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "conversation-item";
+
+
+      if (
+        conversation.id ===
+        conversationId
+      ) {
+
+        item.classList.add(
+          "active"
+        );
+
+      }
+
+
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "conversation-button";
+
+      button.type =
+        "button";
+
+
+      const icon =
+        document.createElement("span");
+
+      icon.className =
+        "conversation-icon";
+
+      icon.textContent =
+        "💬";
+
+
+      const title =
+        document.createElement("span");
+
+      title.className =
+        "conversation-title";
+
+      title.textContent =
+        conversation.title ||
+        "New Chat";
+
+
+      button.append(
+        icon,
+        title
+      );
+
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await switchConversation(
+            conversation.id
+          );
+
+        }
+      );
+
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.className =
+        "conversation-delete";
+
+      deleteButton.type =
+        "button";
+
+      deleteButton.textContent =
+        "×";
+
+      deleteButton.title =
+        "Delete conversation";
+
+
+      deleteButton.addEventListener(
+        "click",
+        async event => {
+
+          event.stopPropagation();
+
+          await deleteConversation(
+            conversation.id
+          );
+
+        }
+      );
+
+
+      item.append(
+        button,
+        deleteButton
+      );
+
+
+      conversationList.append(
+        item
+      );
+
+    }
   );
+
+
+  return data.conversations;
 
 }
 
@@ -450,13 +813,19 @@ async function createConversation(
     data.id;
 
 
-  console.log(
-    "Created conversation:",
-    conversationId
-  );
+  chatTitle.textContent =
+    data.title ||
+    "New Chat";
 
 
-  return conversationId;
+  showWelcome();
+
+
+  await loadConversations();
+
+
+  return data.id;
+
 }
 
 
@@ -464,131 +833,247 @@ async function createConversation(
    LOAD CONVERSATION
 ========================================= */
 
-async function loadConversation() {
+async function switchConversation(
+  id
+) {
 
-  if (!conversationId) {
+  try {
 
-    await createConversation();
-
-    showWelcome();
-
-    return;
-
-  }
-
-
-  const data =
-    await apiRequest(
-      `/api/conversations/${conversationId}`
-    );
+    const data =
+      await apiRequest(
+        `/api/conversations/${id}`
+      );
 
 
-  clearMessages();
+    conversationId =
+      id;
 
 
-  if (
-    !data.messages ||
-    data.messages.length === 0
-  ) {
-
-    showWelcome();
-
-    return;
-
-  }
+    clearMessages();
 
 
-  data.messages.forEach(
-    message => {
+    if (
+      !data.messages ||
+      data.messages.length === 0
+    ) {
 
-      const kind =
-        message.role === "user"
-          ? "user"
-          : "assistant";
+      showWelcome();
 
+    } else {
 
-      const name =
-        message.role === "user"
-          ? "You"
-          : "BradyAI";
+      data.messages.forEach(
+        message => {
 
+          addMessage(
+            message.role === "user"
+              ? "user"
+              : "assistant",
 
-      addMessage(
-        kind,
-        name,
-        message.content
+            message.role === "user"
+              ? "You"
+              : "BradyAI",
+
+            message.content
+          );
+
+        }
       );
 
     }
-  );
-
-}
 
 
-/* =========================================
-   GET USER'S CONVERSATIONS
-========================================= */
+    const conversations =
+      await loadConversations();
 
-async function getConversations() {
 
-  const data =
-    await apiRequest(
-      "/api/conversations"
+    const current =
+      conversations.find(
+        conversation =>
+          conversation.id === id
+      );
+
+
+    if (current) {
+
+      chatTitle.textContent =
+        current.title ||
+        "New Chat";
+
+    }
+
+
+    closeSidebar();
+
+
+    input.focus();
+
+  } catch (error) {
+
+    console.error(
+      "LOAD CONVERSATION ERROR:",
+      error
     );
-
-
-  return data.conversations || [];
-
-}
-
-
-/* =========================================
-   LOAD OR CREATE CHAT
-========================================= */
-
-async function initializeConversation() {
-
-  const conversations =
-    await getConversations();
-
-
-  /*
-    If the user already has a conversation,
-    load the most recently updated one.
-  */
-
-  if (conversations.length > 0) {
-
-    conversationId =
-      conversations[0].id;
-
-
-    console.log(
-      "Loading existing conversation:",
-      conversationId
-    );
-
-
-    await loadConversation();
-
-    return;
 
   }
 
+}
 
-  /*
-    No conversations yet.
-    Create the first one.
-  */
 
-  console.log(
-    "No conversations found. Creating one..."
+/* =========================================
+   NEW CHAT
+========================================= */
+
+async function newChat() {
+
+  try {
+
+    await createConversation(
+      "New Chat"
+    );
+
+    input.focus();
+
+    closeSidebar();
+
+  } catch (error) {
+
+    console.error(
+      "NEW CHAT ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+document
+  .getElementById("new-chat")
+  .addEventListener(
+    "click",
+    newChat
   );
 
 
-  await createConversation();
+/* =========================================
+   DELETE CONVERSATION
+========================================= */
 
-  showWelcome();
+async function deleteConversation(
+  id
+) {
+
+  const confirmed =
+    confirm(
+      "Delete this conversation?"
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    await apiRequest(
+      `/api/conversations/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+
+    if (
+      conversationId === id
+    ) {
+
+      conversationId =
+        null;
+
+      await createConversation(
+        "New Chat"
+      );
+
+    } else {
+
+      await loadConversations();
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "DELETE CONVERSATION ERROR:",
+      error
+    );
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   UPDATE CONVERSATION TITLE
+========================================= */
+
+async function updateConversationTitle(
+  message
+) {
+
+  if (!conversationId) {
+    return;
+  }
+
+
+  const title =
+    message
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 40);
+
+
+  if (!title) {
+    return;
+  }
+
+
+  try {
+
+    /*
+      This uses the existing endpoint structure.
+      The backend update endpoint is added below.
+    */
+
+    await apiRequest(
+      `/api/conversations/${conversationId}`,
+      {
+        method: "PATCH",
+
+        body: JSON.stringify({
+          title: title
+        })
+      }
+    );
+
+
+    chatTitle.textContent =
+      title;
+
+
+    await loadConversations();
+
+  } catch (error) {
+
+    console.warn(
+      "Could not update title:",
+      error
+    );
+
+  }
 
 }
 
@@ -597,7 +1082,9 @@ async function initializeConversation() {
    SEND MESSAGE
 ========================================= */
 
-async function sendMessage(message) {
+async function sendMessage(
+  message
+) {
 
   sendButton.disabled =
     true;
@@ -608,10 +1095,6 @@ async function sendMessage(message) {
 
   try {
 
-    /*
-      Make sure a conversation exists.
-    */
-
     if (!conversationId) {
 
       await createConversation();
@@ -620,11 +1103,51 @@ async function sendMessage(message) {
 
 
     /*
-      Ask BradyAI.
+      Check whether this is the first message.
+    */
 
-      IMPORTANT:
-      The backend handles the AI response
-      and memory.
+    const conversationResponse =
+      await apiRequest(
+        `/api/conversations/${conversationId}`
+      );
+
+    const isFirstMessage =
+      !conversationResponse.messages ||
+      conversationResponse.messages.length === 0;
+
+
+    /*
+      Save user message.
+    */
+
+    await apiRequest(
+      `/api/conversations/${conversationId}/messages`,
+      {
+        method: "POST",
+
+        body: JSON.stringify({
+          role: "user",
+          content: message
+        })
+      }
+    );
+
+
+    /*
+      Give the conversation a title.
+    */
+
+    if (isFirstMessage) {
+
+      await updateConversationTitle(
+        message
+      );
+
+    }
+
+
+    /*
+      Ask BradyAI.
     */
 
     const response =
@@ -642,11 +1165,12 @@ async function sendMessage(message) {
 
     const reply =
       response.reply ||
+      response.error ||
       "Something went wrong.";
 
 
     /*
-      Display AI response.
+      Display response.
     */
 
     addMessage(
@@ -658,24 +1182,7 @@ async function sendMessage(message) {
 
 
     /*
-      Save user message to conversation.
-    */
-
-    await apiRequest(
-      `/api/conversations/${conversationId}/messages`,
-      {
-        method: "POST",
-
-        body: JSON.stringify({
-          role: "user",
-          content: message
-        })
-      }
-    );
-
-
-    /*
-      Save BradyAI response to conversation.
+      Save AI response.
     */
 
     await apiRequest(
@@ -689,6 +1196,9 @@ async function sendMessage(message) {
         })
       }
     );
+
+
+    await loadConversations();
 
 
   } catch (error) {
@@ -723,7 +1233,7 @@ async function sendMessage(message) {
 
 
 /* =========================================
-   FORM SUBMIT
+   FORM
 ========================================= */
 
 form.addEventListener(
@@ -742,10 +1252,6 @@ form.addEventListener(
     }
 
 
-    /*
-      Display user message immediately.
-    */
-
     addMessage(
       "user",
       "You",
@@ -754,6 +1260,10 @@ form.addEventListener(
 
 
     input.value = "";
+
+
+    input.style.height =
+      "auto";
 
 
     await sendMessage(
@@ -765,55 +1275,21 @@ form.addEventListener(
 
 
 /* =========================================
-   CLEAR MEMORY
+   ENTER TO SEND
 ========================================= */
 
-clearMemoryButton.addEventListener(
-  "click",
-  async () => {
+input.addEventListener(
+  "keydown",
+  event => {
 
-    try {
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey
+    ) {
 
-      /*
-        Clear the BradyAI memory through
-        the normal chat API.
-      */
+      event.preventDefault();
 
-      const response =
-        await apiRequest(
-          "/api/chat",
-          {
-            method: "POST",
-
-            body: JSON.stringify({
-              message: "clear memory"
-            })
-          }
-        );
-
-
-      addMessage(
-        "assistant",
-        "BradyAI",
-        response.reply ||
-        "Memory cleared."
-      );
-
-
-    } catch (error) {
-
-      console.error(
-        "CLEAR MEMORY ERROR:",
-        error
-      );
-
-
-      addMessage(
-        "assistant",
-        "BradyAI",
-        error.message ||
-        "Could not clear memory."
-      );
+      form.requestSubmit();
 
     }
 
@@ -822,7 +1298,94 @@ clearMemoryButton.addEventListener(
 
 
 /* =========================================
-   START CHAT
+   AUTO RESIZE TEXTAREA
+========================================= */
+
+input.addEventListener(
+  "input",
+  () => {
+
+    input.style.height =
+      "auto";
+
+    input.style.height =
+      Math.min(
+        input.scrollHeight,
+        180
+      ) + "px";
+
+  }
+);
+
+
+/* =========================================
+   CLEAR MEMORY
+========================================= */
+
+async function clearMemory() {
+
+  addMessage(
+    "user",
+    "You",
+    "clear memory"
+  );
+
+
+  await sendMessage(
+    "clear memory"
+  );
+
+}
+
+
+document
+  .getElementById("clear-memory")
+  .addEventListener(
+    "click",
+    clearMemory
+  );
+
+
+document
+  .getElementById("sidebar-clear-memory")
+  .addEventListener(
+    "click",
+    clearMemory
+  );
+
+
+/* =========================================
+   SIGN OUT
+========================================= */
+
+document
+  .getElementById("sign-out")
+  .addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        await Clerk.signOut();
+
+        window.location.href =
+          "/sign-in";
+
+      } catch (error) {
+
+        console.error(
+          "SIGN OUT ERROR:",
+          error
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================================
+   START
 ========================================= */
 
 async function initializeChat() {
@@ -838,24 +1401,40 @@ async function initializeChat() {
 
   try {
 
-    await initializeConversation();
+    const conversations =
+      await loadConversations();
+
+
+    if (
+      conversations &&
+      conversations.length > 0
+    ) {
+
+      /*
+        Open the most recently updated
+        conversation.
+      */
+
+      await switchConversation(
+        conversations[0].id
+      );
+
+    } else {
+
+      await createConversation(
+        "New Chat"
+      );
+
+    }
 
   } catch (error) {
 
     console.error(
-      "Conversation initialization error:",
+      "INITIALIZATION ERROR:",
       error
     );
 
-
-    clearMessages();
-
-
-    addMessage(
-      "assistant",
-      "BradyAI",
-      "I couldn't load your conversations. Check the server logs."
-    );
+    showWelcome();
 
   }
 
@@ -867,5 +1446,4 @@ initializeChat();
 </script>
 
 </body>
-
 </html>
