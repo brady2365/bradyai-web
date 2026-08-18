@@ -292,15 +292,17 @@ h1 {
 
 
 /* =========================================
-   MESSAGE AREA
+   MESSAGES
 ========================================= */
 
 .messages {
     overflow-y: auto;
     padding: 28px 40px;
+
     display: flex;
     flex-direction: column;
-    gap: 22px;
+
+    gap: 20px;
 }
 
 
@@ -311,12 +313,13 @@ h1 {
 .message-row {
     display: flex;
     align-items: flex-start;
+
     width: 100%;
 }
 
 
 /* =========================================
-   BRADYAI ROW
+   BRADYAI
 ========================================= */
 
 .message-row.assistant {
@@ -325,7 +328,7 @@ h1 {
 
 
 /* =========================================
-   USER ROW
+   USER
 ========================================= */
 
 .message-row.user {
@@ -334,12 +337,13 @@ h1 {
 
 
 /* =========================================
-   BRADYAI AVATAR
+   BRADYAI LOGO
 ========================================= */
 
 .message-avatar {
     width: 34px;
     height: 34px;
+
     min-width: 34px;
 
     display: flex;
@@ -354,7 +358,29 @@ h1 {
     font-size: 14px;
     font-weight: 800;
 
+    margin-right: 8px;
+}
+
+
+/* =========================================
+   BRADYAI NAME
+========================================= */
+
+.message-identity {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
     margin-right: 10px;
+
+    flex-shrink: 0;
+}
+
+.message-identity strong {
+    white-space: nowrap;
+
+    font-size: 0.9rem;
 }
 
 
@@ -363,60 +389,46 @@ h1 {
 ========================================= */
 
 .message {
-    display: inline-block;
-
-    width: fit-content;
+    width: max-content;
     max-width: 70%;
 
-    padding: 11px 15px;
+    flex: 0 1 auto;
+
+    padding: 10px 14px;
 
     border-radius: 16px;
 
-    line-height: 1.5;
+    line-height: 1.45;
 
     white-space: pre-wrap;
     overflow-wrap: anywhere;
-
-    flex: 0 0 auto;
 }
 
 
 /* =========================================
-   BRADYAI MESSAGE
+   BRADYAI BUBBLE
 ========================================= */
 
 .message.assistant {
     background: #1c2b52;
+
     border-bottom-left-radius: 5px;
 }
 
 
 /* =========================================
-   USER MESSAGE
+   USER BUBBLE
 ========================================= */
 
 .message.user {
     background: #315fbe;
+
     border-bottom-right-radius: 5px;
 }
 
 
 /* =========================================
-   BRADYAI NAME
-========================================= */
-
-.message.assistant strong {
-    display: block;
-
-    margin-bottom: 4px;
-
-    font-size: 0.85rem;
-    font-weight: 700;
-}
-
-
-/* =========================================
-   MESSAGE TEXT
+   TEXT
 ========================================= */
 
 .message p {
@@ -429,8 +441,9 @@ h1 {
 ========================================= */
 
 .sources {
-    margin: 12px 0 0;
+    margin: 10px 0 0;
     padding-left: 18px;
+
     font-size: 0.85rem;
 }
 
@@ -446,19 +459,17 @@ h1 {
 @media (max-width: 600px) {
 
     .messages {
-        padding: 20px 16px;
-        gap: 16px;
+        padding: 20px 14px;
     }
 
     .message {
-        max-width: 85%;
+        max-width: 80%;
     }
 
     .message-avatar {
         width: 30px;
         height: 30px;
         min-width: 30px;
-        margin-right: 8px;
     }
 
 }
