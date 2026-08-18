@@ -52,24 +52,50 @@ def init_database():
             """)
 
             # =========================================
-            # CHAT HISTORY
+            # CONVERSATIONS
             # =========================================
 
             cursor.execute("""
-                CREATE TABLE IF NOT EXISTS chat_messages (
+                CREATE TABLE IF NOT EXISTS conversations (
                     id BIGSERIAL PRIMARY KEY,
                     user_id TEXT NOT NULL,
+                    title TEXT NOT NULL DEFAULT 'New Chat',
+                    created_at TIMESTAMP WITH TIME ZONE
+                        DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP WITH TIME ZONE
+                        DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_conversations_user_id
+                ON conversations(user_id)
+            """)
+
+            # =========================================
+            # MESSAGES
+            # =========================================
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS messages (
+                    id BIGSERIAL PRIMARY KEY,
+                    conversation_id BIGINT NOT NULL,
+                    user_id TEXT NOT NULL,
                     role TEXT NOT NULL,
-                    message TEXT NOT NULL,
+                    content TEXT NOT NULL,
                     created_at TIMESTAMP WITH TIME ZONE
                         DEFAULT CURRENT_TIMESTAMP
                 )
             """)
 
-            # Makes loading a user's history faster
             cursor.execute("""
-                CREATE INDEX IF NOT EXISTS idx_chat_messages_user_id
-                ON chat_messages(user_id)
+                CREATE INDEX IF NOT EXISTS idx_messages_conversation_id
+                ON messages(conversation_id)
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_messages_user_id
+                ON messages(user_id)
             """)
 
         connection.commit()
@@ -149,80 +175,6 @@ def save_user_memory(user_id, memory):
     finally:
         connection.close()
 
-# =========================================
-# CHAT HISTORY
-# =========================================
-
-def save_chat_message(user_id, role, message):
-    connection = get_db_connection()
-
-    try:
-        with connection.cursor() as cursor:
-
-            cursor.execute("""
-                INSERT INTO chat_messages
-                    (user_id, role, message)
-                VALUES
-                    (%s, %s, %s)
-            """, (
-                user_id,
-                role,
-                message
-            ))
-
-        connection.commit()
-
-    finally:
-        connection.close()
-
-
-def get_chat_history(user_id, limit=100):
-    connection = get_db_connection()
-
-    try:
-        with connection.cursor() as cursor:
-
-            cursor.execute("""
-                SELECT role, message, created_at
-                FROM chat_messages
-                WHERE user_id = %s
-                ORDER BY created_at ASC
-                LIMIT %s
-            """, (
-                user_id,
-                limit
-            ))
-
-            rows = cursor.fetchall()
-
-            return [
-                {
-                    "role": row[0],
-                    "message": row[1],
-                    "created_at": row[2].isoformat()
-                }
-                for row in rows
-            ]
-
-    finally:
-        connection.close()
-
-
-def clear_chat_history(user_id):
-    connection = get_db_connection()
-
-    try:
-        with connection.cursor() as cursor:
-
-            cursor.execute("""
-                DELETE FROM chat_messages
-                WHERE user_id = %s
-            """, (user_id,))
-
-        connection.commit()
-
-    finally:
-        connection.close()
 
 # =========================================
 # CONVERSATION FUNCTIONS
@@ -830,38 +782,6 @@ def index():
 @app.get("/chat")
 def chat_page():
     return render_template("chat.html")
-
-@app.get("/api/chat/history")
-def chat_history():
-
-    user_id = get_authenticated_user()
-
-    if not user_id:
-        return jsonify({
-            "error": "You must be signed in."
-        }), 401
-
-    history = get_chat_history(user_id)
-
-    return jsonify({
-        "messages": history
-    })
-
-@app.post("/api/chat/clear")
-def clear_chat():
-
-    user_id = get_authenticated_user()
-
-    if not user_id:
-        return jsonify({
-            "error": "You must be signed in."
-        }), 401
-
-    clear_chat_history(user_id)
-
-    return jsonify({
-        "success": True
-    })
 
 @app.post("/api/chat")
 def chat():
