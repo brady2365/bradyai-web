@@ -22,6 +22,7 @@ body {
         #18234a,
         #0b1020 55%
     );
+
     overflow: hidden;
 }
 
@@ -29,506 +30,13 @@ body {
 /* =========================================
    APP LAYOUT
 ========================================= */
-
-.app-shell {
-    width: 100%;
-    height: 100vh;
-
-    display: grid;
-
-    grid-template-columns: 260px minmax(0, 1fr);
-
-    overflow: hidden;
-
-    background: rgba(13, 20, 41, 0.94);
-}
-
-
-/* =========================================
-   SIDEBAR
-========================================= */
-
-.sidebar {
-    height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-
-    background: #0d1429;
-
-    border-right: 1px solid #2a375c;
-
-    overflow: hidden;
-}
-
-
-/* Sidebar header */
-
-.sidebar-header {
-    padding: 18px;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 12px;
-
-    border-bottom: 1px solid #2a375c;
-}
-
-.sidebar-title {
-    font-size: 1.1rem;
-    font-weight: 800;
-}
-
-.new-chat-button {
-    width: 100%;
-
-    min-height: 42px;
-
-    border: 1px solid #50699f;
-    border-radius: 10px;
-
-    background: #18264a;
-
-    color: #edf2ff;
-
-    font: inherit;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        border-color 0.15s ease;
-}
-
-.new-chat-button:hover {
-    background: #22345f;
-    border-color: #6b8ed8;
-}
-
-
-/* Conversation list */
-
-.conversations {
-    flex: 1;
-
-    overflow-y: auto;
-
-    padding: 10px;
-}
-
-
-/* Individual conversation */
-
-.conversation {
-    width: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 8px;
-
-    padding: 11px 12px;
-
-    margin-bottom: 4px;
-
-    border: 0;
-    border-radius: 9px;
-
-    background: transparent;
-
-    color: #dce5ff;
-
-    font: inherit;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease;
-}
-
-.conversation:hover {
-    background: #18264a;
-}
-
-.conversation.active {
-    background: #22345f;
-}
-
-.conversation-title {
-    flex: 1;
-
-    overflow: hidden;
-
-    white-space: nowrap;
-
-    text-overflow: ellipsis;
-
-    font-size: 0.9rem;
-}
-
-
-/* Delete button */
-
-.delete-conversation {
-    flex-shrink: 0;
-
-    width: 28px;
-    height: 28px;
-
-    padding: 0;
-
-    border-radius: 7px;
-
-    background: transparent;
-
-    color: #8492b5;
-
-    font-size: 0.85rem;
-
-    opacity: 0;
-
-    cursor: pointer;
-}
-
-.conversation:hover .delete-conversation {
-    opacity: 1;
-}
-
-.delete-conversation:hover {
-    background: #3a2330;
-    color: #ff8c9c;
-}
-
-
-/* =========================================
-   SIDEBAR FOOTER
-========================================= */
-
-.sidebar-footer {
-    padding: 12px;
-
-    border-top: 1px solid #2a375c;
-}
-
-.clear-memory {
-    width: 100%;
-
-    padding: 10px;
-
-    border-radius: 9px;
-
-    background: #18264a;
-
-    color: #b9c7e8;
-
-    font-size: 0.82rem;
-}
-
-.clear-memory:hover {
-    background: #25345d;
-}
-
-
-/* =========================================
-   CHAT AREA
-========================================= */
-
-.chat-area {
-    min-width: 0;
-
-    height: 100vh;
-
-    display: grid;
-
-    grid-template-rows: auto minmax(0, 1fr) auto;
-
-    overflow: hidden;
-}
-
-
-/* =========================================
-   HEADER
-========================================= */
-
-header {
-    min-height: 78px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 18px 26px;
-
-    border-bottom: 1px solid #2a375c;
-}
-
-.header-left {
-    display: flex;
-    flex-direction: column;
-}
-
-h1 {
-    margin: 0;
-
-    font-size: 1.6rem;
-}
-
-.eyebrow {
-    margin: 0 0 4px;
-
-    color: #98b3ff;
-
-    font-size: 0.7rem;
-
-    letter-spacing: 0.14em;
-
-    font-weight: 700;
-}
-
-/* =========================================
-   COMPOSER
-========================================= */
-
-.composer {
-    padding: 18px 7vw 22px;
-
-    border-top: 1px solid #2a375c;
-
-    background: rgba(13, 20, 41, 0.96);
-}
-
-.composer label {
-    display: block;
-
-    margin-bottom: 7px;
-
-    font-size: 0.85rem;
-
-    font-weight: 700;
-}
-
-.composer-row {
-    display: flex;
-
-    gap: 10px;
-
-    max-width: 900px;
-
-    margin: 0 auto;
-}
-
-textarea {
-    flex: 1;
-
-    resize: none;
-
-    min-height: 50px;
-    max-height: 180px;
-
-    border: 1px solid #50699f;
-
-    border-radius: 10px;
-
-    padding: 11px;
-
-    color: inherit;
-
-    background: #0b142c;
-
-    font: inherit;
-
-    outline: none;
-}
-
-textarea:focus {
-    border-color: #6e94e8;
-}
-
-button {
-    border: 0;
-
-    border-radius: 10px;
-
-    padding: 0 17px;
-
-    background: #5c8fff;
-
-    color: #fff;
-
-    font: inherit;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        transform 0.1s ease;
-}
-
-button:hover {
-    background: #709cff;
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-button:disabled {
-    opacity: 0.65;
-
-    cursor: wait;
-}
-
-.quiet-button {
-    padding: 9px 12px;
-
-    background: #26375f;
-
-    font-size: 0.85rem;
-}
-
-.hint {
-    max-width: 900px;
-
-    margin: 10px auto 0;
-
-    color: #a9b7d8;
-
-    font-size: 0.8rem;
-}
-
-code {
-    color: #c9d8ff;
-}
-
-
-/* =========================================
-   MOBILE SIDEBAR
-========================================= */
-
-.mobile-menu-button {
-    display: none;
-
-    width: 42px;
-    height: 42px;
-
-    padding: 0;
-
-    background: #26375f;
-
-    font-size: 1.2rem;
-}
-
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media (max-width: 700px) {
-
-    body {
-        overflow: hidden;
-    }
-
-    .app-shell {
-        grid-template-columns: 1fr;
-
-        height: 100vh;
-    }
-
-    .sidebar {
-        position: fixed;
-
-        z-index: 100;
-
-        top: 0;
-        left: 0;
-
-        width: 280px;
-
-        transform: translateX(-100%);
-
-        transition: transform 0.2s ease;
-
-        box-shadow: 20px 0 50px #0008;
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
-    }
-
-    .chat-area {
-        width: 100%;
-        height: 100vh;
-    }
-
-    .mobile-menu-button {
-        display: block;
-    }
-
-    header {
-        padding: 15px 16px;
-    }
-
-    h1 {
-        font-size: 1.35rem;
-    }
-    .messages {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-
-        overflow-y: auto;
-        padding: 28px 40px;
-    }
-
-    .message {
-        max-width: 92%;
-    }
-
-    .composer {
-        padding: 12px 14px 16px;
-    }
-
-    .composer-row {
-        align-items: stretch;
-    }
-
-    .composer-row button {
-        min-width: 74px;
-    }
-
-    .hint {
-        display: none;
-    }
-}
-
-/* =========================================
-   APP LAYOUT
-========================================= */
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: #0b1020;
-    color: #edf2ff;
-    font-family: Inter, system-ui, sans-serif;
-}
 
 .app-layout {
     width: 100%;
     height: 100vh;
+
     display: flex;
+
     overflow: hidden;
 }
 
@@ -540,12 +48,14 @@ body {
 .sidebar {
     width: 270px;
     height: 100vh;
+
     flex-shrink: 0;
 
     display: flex;
     flex-direction: column;
 
     background: #0d1429;
+
     border-right: 1px solid #2a375c;
 
     padding: 18px 14px;
@@ -554,7 +64,9 @@ body {
 }
 
 
-/* Sidebar header */
+/* =========================================
+   SIDEBAR HEADER
+========================================= */
 
 .sidebar-header {
     display: flex;
@@ -567,6 +79,7 @@ body {
 .brand {
     display: flex;
     align-items: center;
+
     gap: 10px;
 }
 
@@ -576,6 +89,8 @@ body {
 
     display: grid;
     place-items: center;
+
+    flex-shrink: 0;
 
     border-radius: 10px;
 
@@ -588,14 +103,17 @@ body {
 
 .brand strong {
     display: block;
+
     font-size: 15px;
 }
 
 .brand span {
     display: block;
+
     margin-top: 2px;
 
     color: #8998bd;
+
     font-size: 12px;
 }
 
@@ -610,6 +128,7 @@ body {
 
     display: flex;
     align-items: center;
+
     gap: 9px;
 
     padding: 0 14px;
@@ -624,10 +143,15 @@ body {
     font-weight: 700;
 
     cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
 }
 
 .new-chat-button:hover {
     background: #203157;
+    border-color: #5874ac;
 }
 
 
@@ -637,6 +161,7 @@ body {
 
 .conversation-section {
     flex: 1;
+
     min-height: 0;
 
     margin-top: 22px;
@@ -646,11 +171,13 @@ body {
     padding: 0 8px 8px;
 
     color: #7f8daf;
+
     font-size: 11px;
     font-weight: 700;
 
     text-transform: uppercase;
-    letter-spacing: .08em;
+
+    letter-spacing: 0.08em;
 }
 
 .conversation-list {
@@ -660,16 +187,20 @@ body {
 
     display: flex;
     flex-direction: column;
+
     gap: 4px;
 }
 
 .conversation-item {
+    width: 100%;
+
     display: flex;
     align-items: center;
 
-    width: 100%;
-
     border-radius: 9px;
+
+    transition:
+        background 0.15s ease;
 }
 
 .conversation-item:hover {
@@ -682,20 +213,23 @@ body {
 
 .conversation-button {
     flex: 1;
+
     min-width: 0;
 
     display: flex;
     align-items: center;
+
     gap: 9px;
 
     padding: 10px;
 
     border: 0;
-    background: transparent;
 
+    background: transparent;
     color: #dce5ff;
 
     font: inherit;
+
     text-align: left;
 
     cursor: pointer;
@@ -703,6 +237,7 @@ body {
 
 .conversation-icon {
     flex-shrink: 0;
+
     font-size: 14px;
 }
 
@@ -710,6 +245,7 @@ body {
     overflow: hidden;
 
     white-space: nowrap;
+
     text-overflow: ellipsis;
 
     font-size: 13px;
@@ -719,12 +255,17 @@ body {
     width: 32px;
     height: 32px;
 
+    flex-shrink: 0;
+
     margin-right: 4px;
+
+    padding: 0;
 
     border: 0;
     border-radius: 7px;
 
     background: transparent;
+
     color: #7180a2;
 
     cursor: pointer;
@@ -740,6 +281,7 @@ body {
     padding: 12px 8px;
 
     color: #7180a2;
+
     font-size: 13px;
 }
 
@@ -751,6 +293,7 @@ body {
 .sidebar-bottom {
     display: flex;
     flex-direction: column;
+
     gap: 6px;
 
     padding-top: 14px;
@@ -767,12 +310,18 @@ body {
     border-radius: 9px;
 
     background: transparent;
+
     color: #aebbd8;
 
     font: inherit;
+
     text-align: left;
 
     cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
 }
 
 .sidebar-button:hover {
@@ -787,18 +336,21 @@ body {
 
 .main-area {
     flex: 1;
+
     min-width: 0;
+
     height: 100vh;
 
     display: grid;
-    grid-template-rows: auto 1fr auto;
+
+    grid-template-rows: auto minmax(0, 1fr) auto;
 
     background: #0b1020;
 }
 
 
 /* =========================================
-   HEADER
+   CHAT HEADER
 ========================================= */
 
 .chat-header {
@@ -814,6 +366,7 @@ body {
 
 .chat-title-container {
     flex: 1;
+
     margin-left: 14px;
 }
 
@@ -831,8 +384,13 @@ body {
     font-size: 10px;
     font-weight: 700;
 
-    letter-spacing: .14em;
+    letter-spacing: 0.14em;
 }
+
+
+/* =========================================
+   ICON BUTTON
+========================================= */
 
 .icon-button {
     width: 40px;
@@ -841,15 +399,21 @@ body {
     display: grid;
     place-items: center;
 
+    padding: 0;
+
     border: 0;
     border-radius: 9px;
 
     background: transparent;
+
     color: #dce5ff;
 
     font-size: 21px;
 
     cursor: pointer;
+
+    transition:
+        background 0.15s ease;
 }
 
 .icon-button:hover {
@@ -864,6 +428,11 @@ body {
     display: none;
 }
 
+
+/* =========================================
+   QUIET BUTTON
+========================================= */
+
 .quiet-button {
     padding: 9px 12px;
 
@@ -871,13 +440,22 @@ body {
     border-radius: 9px;
 
     background: #26375f;
+
     color: white;
 
     font: inherit;
+
     font-size: 13px;
     font-weight: 700;
 
     cursor: pointer;
+
+    transition:
+        background 0.15s ease;
+}
+
+.quiet-button:hover {
+    background: #314574;
 }
 
 
@@ -886,69 +464,180 @@ body {
 ========================================= */
 
 .messages {
-    overflow-y: auto;
+    min-height: 0;
 
-    padding: 30px 8%;
+    overflow-y: auto;
 
     display: flex;
     flex-direction: column;
-    gap: 20px;
+
+    gap: 6px;
+
+    padding: 28px 40px;
 }
 
-.message {
-    width: 100%;
-    max-width: 850px;
 
-    margin: 0 auto;
+/* =========================================
+   MESSAGE ROW
+========================================= */
+
+.message-row {
+    width: 100%;
 
     display: flex;
-    gap: 12px;
+    align-items: center;
 
-    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+
+    gap: 0;
+}
+
+.message-row.assistant {
+    justify-content: flex-start;
+}
+
+.message-row.user {
+    justify-content: flex-end;
+}
+
+
+/* =========================================
+   MESSAGE BUBBLE
+========================================= */
+
+.message {
+    display: block;
+
+    width: fit-content !important;
+
+    max-width: 70%;
+
+    flex: 0 1 auto;
+
+    margin: 0 !important;
+
+    padding: 10px 14px;
+
+    border-radius: 15px;
+
+    line-height: 1.45;
+
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   ASSISTANT MESSAGE
+========================================= */
+
+.message.assistant {
+    background: #1c2b52;
+
+    border-bottom-left-radius: 5px;
+}
+
+
+/* =========================================
+   USER MESSAGE
+========================================= */
+
+.message.user {
+    background: #315fbe;
+
+    border-bottom-right-radius: 5px;
+}
+
+
+/* =========================================
+   MESSAGE TEXT
+========================================= */
+
+.message p {
+    display: block;
+
+    width: auto;
+
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================
+   BRADYAI IDENTITY
+========================================= */
+
+.message-identity {
+    display: flex;
+    align-items: center;
+
+    gap: 0;
+
+    margin: 0 6px 0 0;
+
+    flex-shrink: 0;
 }
 
 .message-avatar {
     width: 32px;
     height: 32px;
 
-    flex-shrink: 0;
+    min-width: 32px;
 
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    border-radius: 9px;
+    margin: 0 6px 0 0;
 
-    background: #26375f;
+    border-radius: 50%;
 
-    font-size: 11px;
+    background: #5c8fff;
+
+    color: white;
+
+    font-size: 14px;
     font-weight: 800;
 }
 
-.message.user .message-avatar {
-    background: #315fbe;
-}
+.message-name {
+    display: inline-block;
 
-.message-content {
+    width: auto;
+
     min-width: 0;
+
+    margin: 0 4px 0 0;
+    padding: 0;
+
+    color: #edf2ff;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    white-space: nowrap;
 }
 
-.message-content strong {
-    display: block;
-    margin-bottom: 4px;
-}
 
-.message-content p {
-    margin: 0;
+/* =========================================
+   SOURCES
+========================================= */
 
-    white-space: pre-wrap;
-}
+.message .sources {
+    width: auto;
 
-.sources {
-    margin: 12px 0 0;
+    margin: 10px 0 0;
+
     padding-left: 18px;
+
+    font-size: 0.85rem;
 }
 
-.sources a {
+.message .sources a {
     color: #b9ceff;
 }
 
@@ -978,6 +667,8 @@ body {
 
     background: #5c8fff;
 
+    color: white;
+
     font-size: 24px;
     font-weight: 800;
 }
@@ -1001,15 +692,19 @@ body {
     padding: 16px 8% 20px;
 
     border-top: 1px solid #2a375c;
+
+    background: rgba(13, 20, 41, 0.96);
 }
 
 .composer-row {
     width: 100%;
+
     max-width: 850px;
 
     margin: 0 auto;
 
     display: flex;
+
     gap: 10px;
 }
 
@@ -1027,6 +722,7 @@ textarea {
     border-radius: 12px;
 
     background: #0b142c;
+
     color: inherit;
 
     font: inherit;
@@ -1045,16 +741,31 @@ textarea:focus {
     border-radius: 10px;
 
     background: #5c8fff;
+
     color: white;
 
     font: inherit;
+
     font-weight: 700;
 
     cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease;
+}
+
+#send:hover {
+    background: #709cff;
+}
+
+#send:active {
+    transform: scale(0.98);
 }
 
 #send:disabled {
-    opacity: .65;
+    opacity: 0.65;
+
     cursor: wait;
 }
 
@@ -1066,12 +777,13 @@ textarea:focus {
     color: #6f7d9f;
 
     font-size: 11px;
+
     text-align: center;
 }
 
 
 /* =========================================
-   MOBILE SIDEBAR
+   SIDEBAR OVERLAY
 ========================================= */
 
 .sidebar-overlay {
@@ -1104,7 +816,7 @@ textarea:focus {
 
         transform: translateX(-100%);
 
-        transition: transform .25s ease;
+        transition: transform 0.25s ease;
 
         box-shadow: 20px 0 50px #0008;
     }
@@ -1120,20 +832,22 @@ textarea:focus {
 
         display: block;
 
-        background: rgba(0, 0, 0, .55);
+        background: rgba(0, 0, 0, 0.55);
 
         opacity: 0;
+
         visibility: hidden;
 
         transition:
-            opacity .25s ease,
-            visibility .25s ease;
+            opacity 0.25s ease,
+            visibility 0.25s ease;
 
         z-index: 90;
     }
 
     .sidebar-overlay.overlay-visible {
         opacity: 1;
+
         visibility: visible;
     }
 
@@ -1154,7 +868,30 @@ textarea:focus {
     }
 
     .messages {
-        padding: 24px 16px;
+        gap: 6px;
+
+        padding: 20px 14px;
+    }
+
+    .message {
+        max-width: 82%;
+    }
+
+    .message-avatar {
+        width: 30px;
+        height: 30px;
+
+        min-width: 30px;
+
+        font-size: 13px;
+
+        margin-right: 5px;
+    }
+
+    .message-name {
+        font-size: 0.85rem;
+
+        margin-right: 4px;
     }
 
     .composer {
@@ -1169,262 +906,7 @@ textarea:focus {
         padding: 0 14px;
     }
 
-    .message {
-        max-width: 100%;
+    .hint {
+        display: none;
     }
-}
-
-/* =========================================
-   BRADYAI IDENTITY
-========================================= */
-
-.message-identity {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    margin-right: 10px;
-
-    flex-shrink: 0;
-}
-
-.message-identity strong {
-    color: #edf2ff;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-
-/* =========================================
-   AVATAR
-========================================= */
-
-.message-avatar {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #5c8fff;
-    color: white;
-
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.message-name {
-    margin-right: 10px;
-
-    white-space: nowrap;
-
-    font-size: 0.9rem;
-    font-weight: 700;
-
-    color: #edf2ff;
-}
-
-/* =========================================
-   CLEAN CHAT MESSAGES
-========================================= */
-
-.messages {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-
-    overflow-y: auto;
-    padding: 28px 40px;
-}
-
-
-/* =========================================
-   MESSAGE ROW
-========================================= */
-
-.message-row {
-    display: flex;
-    align-items: center;
-
-    width: 100%;
-
-    margin: 0;
-    padding: 0;
-}
-
-
-/* BradyAI stays on the left */
-
-.message-row.assistant {
-    justify-content: flex-start;
-}
-
-
-/* User stays on the right */
-
-.message-row.user {
-    justify-content: flex-end;
-}
-
-
-/* =========================================
-   BRADYAI LOGO
-========================================= */
-
-.message-avatar {
-    width: 32px;
-    height: 32px;
-
-    min-width: 32px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #5c8fff;
-    color: white;
-
-    font-size: 14px;
-    font-weight: 800;
-
-    margin: 0 8px 0 0;
-}
-
-
-/* =========================================
-   BRADYAI NAME
-========================================= */
-
-.message-name {
-    display: inline-block;
-
-    width: auto;
-    min-width: 0;
-
-    margin: 0 8px 0 0;
-    padding: 0;
-
-    color: #edf2ff;
-
-    font-size: 0.9rem;
-    font-weight: 700;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================
-   MESSAGE BUBBLE
-========================================= */
-
-.message {
-    display: block;
-
-    /* THIS IS THE IMPORTANT PART */
-    width: fit-content !important;
-    max-width: 70%;
-
-    /* Prevent the flexbox from stretching it */
-    flex: 0 1 auto;
-
-    margin: 0 !important;
-
-    padding: 10px 14px;
-
-    border-radius: 15px;
-
-    line-height: 1.45;
-
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-
-    box-sizing: border-box;
-}
-
-
-/* =========================================
-   BRADYAI BUBBLE
-========================================= */
-
-.message.assistant {
-    background: #1c2b52;
-
-    border-bottom-left-radius: 5px;
-}
-
-
-/* =========================================
-   USER BUBBLE
-========================================= */
-
-.message.user {
-    background: #315fbe;
-
-    border-bottom-right-radius: 5px;
-}
-
-
-/* =========================================
-   TEXT
-========================================= */
-
-.message p {
-    display: block;
-
-    width: auto;
-
-    margin: 0;
-    padding: 0;
-}
-
-
-/* =========================================
-   SOURCES
-========================================= */
-
-.message .sources {
-    width: auto;
-
-    margin: 10px 0 0;
-    padding-left: 18px;
-
-    font-size: 0.85rem;
-}
-
-.message .sources a {
-    color: #b9ceff;
-}
-
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media (max-width: 600px) {
-
-    .messages {
-        padding: 20px 14px;
-    }
-
-    .message {
-        max-width: 82%;
-    }
-
-    .message-avatar {
-        width: 30px;
-        height: 30px;
-        min-width: 30px;
-    }
-
-    .message-name {
-        font-size: 0.85rem;
-    }
-
 }
