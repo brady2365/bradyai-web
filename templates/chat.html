@@ -48,7 +48,9 @@
     <div class="sidebar-header">
 
       <div class="brand">
-        <div class="brand-icon">B</div>
+        <div class="brand-icon">
+            <img src="{{ url_for('static', filename='bradyai.png') }}" alt="BradyAI">
+        </div>
 
         <div>
           <strong>BradyAI</strong>
@@ -529,7 +531,7 @@ function addMessage(
      BRADYAI LOGO + NAME
   ========================================= */
 
-  if (kind === "assistant") {
+if (kind === "assistant") {
 
     const avatar =
       document.createElement("div");
@@ -537,8 +539,19 @@ function addMessage(
     avatar.className =
       "message-avatar";
 
-    avatar.textContent =
-      "B";
+    const logo =
+      document.createElement("img");
+
+    logo.src =
+      "/static/bradyai.png";
+
+    logo.alt =
+      "BradyAI";
+
+    avatar.appendChild(
+      logo
+    );
+}
 
 
     const nameElement =
