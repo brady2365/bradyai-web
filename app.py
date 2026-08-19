@@ -27,8 +27,9 @@ app = Flask(__name__)
 
 @app.after_request
 def allow_iframe(response):
-    response.headers.pop("X-Frame-Options", None)
-    response.headers["Content-Security-Policy"] = "frame-ancestors *"
+    response.headers["Content-Security-Policy"] = (
+        "frame-ancestors 'self' https://nexuronai.github.io"
+    )
     return response
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
