@@ -23,6 +23,14 @@ PUBLIC_MODE = os.environ.get("PUBLIC_MODE", "false").lower() == "true"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 app = Flask(__name__)
 
+app = Flask(__name__)
+
+@app.after_request
+def allow_iframe(response):
+    response.headers.pop("X-Frame-Options", None)
+    response.headers["Content-Security-Policy"] = "frame-ancestors *"
+    return response
+
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
