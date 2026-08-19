@@ -35,6 +35,8 @@ CORS(
     supports_credentials=True
 )
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
 
 def get_db_connection():
     if not DATABASE_URL:
