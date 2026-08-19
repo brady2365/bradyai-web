@@ -5,6 +5,7 @@ import re
 import torch
 import torch.nn.functional as F
 from flask import Flask, jsonify, render_template, request, send_from_directory, redirect
+from flask_cors import CORS
 from clerk_backend_api import Clerk
 from clerk_backend_api.security.types import AuthenticateRequestOptions
 import psycopg2
@@ -21,18 +22,18 @@ TOP_K = 5
 PUBLIC_MODE = os.environ.get("PUBLIC_MODE", "false").lower() == "true"
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-app = Flask(__name__)
 
 app = Flask(__name__)
 
-@app.after_request
-def allow_iframe(response):
-    response.headers["Content-Security-Policy"] = (
-        "frame-ancestors 'self' https://nexuronai.github.io"
-    )
-    return response
-
-DATABASE_URL = os.environ.get("DATABASE_URL")
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": "https://nexuronai.github.io"
+        }
+    },
+    supports_credentials=True
+)
 
 
 def get_db_connection():
